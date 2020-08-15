@@ -12,3 +12,10 @@ class Submission(db.Model):
     username = Column(String(50), unique=False)
     standup_submission = Column(String(), unique=False)
     created_at = Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
+class Standup(db.Model):
+    __tablename__ = "standup"
+    id = Column(Integer, primary_key=True)
+    standup_blocks = Column(String(), unique=False)
+    trigger = Column(String(10), unique=False)

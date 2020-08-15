@@ -9,7 +9,7 @@ from slack.errors import SlackApiError
 from slack.signature import SignatureVerifier
 
 from app.constants import STANDUP_MODAL_TEMPLATE, STANDUP_CHANNEL_ID
-from app.models import Submission, db
+from app.models import Submission, Standup, db
 from app.utils import build_standup
 
 
@@ -23,8 +23,10 @@ def interactive_endpoint():
         return make_response("invalid request", 403)
 
     try:
+        standup = Standup.query.filter_by(trigger=request.form.get("text")).first()
+
         client.views_open(
-            trigger_id=request.form.get("trigger_id"), view=STANDUP_MODAL_TEMPLATE
+            trigger_id=request.form.get("trigger_id"), view=standup.standup_blocks
         )
         return make_response("", 200)
     except SlackApiError as e:
