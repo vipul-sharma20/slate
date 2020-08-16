@@ -23,8 +23,8 @@ client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 
 
 # Callback for entrypoint trigger on Slack (slash command etc.)
-@app.route("/slack/entrypoint-trigger/", methods=["POST"])
-def entrypoint_trigger():
+@app.route("/slack/standup-trigger/", methods=["POST"])
+def standup_trigger():
     if not signature_verifier.is_valid_request(request.get_data(), request.headers):
         return make_response("invalid request", 403)
 
