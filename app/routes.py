@@ -132,9 +132,19 @@ def active_standups():
     return jsonify({"success": True, "standups": filtered_standups})
 
 
+# Delete a standup
+@app.route("/api/delete_standup/", methods=["DELETE"])
+def delete_standup():
+    payload = request.json
+    if payload:
+        Standup.query.filter_by(id=payload.get("id")).delete()
+        db.session.commit()
+    return jsonify({"success": True})
+
+
 # Delete all previous submissions
 @app.route("/api/delete_submissions/", methods=["DELETE"])
-def delete_standup():
+def delete_submissions():
     todays_datetime = datetime(
         datetime.today().year, datetime.today().month, datetime.today().day
     )
