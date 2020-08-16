@@ -28,7 +28,9 @@ def interactive_endpoint():
         return make_response("invalid request", 403)
 
     try:
-        standup = Standup.query.filter_by(trigger=request.form.get("text")).first()
+        standup = Standup.query.filter_by(
+            is_active=True, trigger=request.form.get("text")
+        ).first()
 
         client.views_open(
             trigger_id=request.form.get("trigger_id"), view=standup.standup_blocks
