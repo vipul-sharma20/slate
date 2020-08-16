@@ -2,13 +2,18 @@ import os
 import json
 from datetime import datetime
 
-from flask import request, make_response
+from flask import request, make_response, jsonify
 from flask import current_app as app
 from slack import WebClient
 from slack.errors import SlackApiError
 from slack.signature import SignatureVerifier
 
-from app.constants import STANDUP_MODAL_TEMPLATE, STANDUP_CHANNEL_ID
+from app.constants import (
+    STANDUP_CHANNEL_ID,
+    ALL,
+    ACTIVE,
+    INACTIVE,
+)
 from app.models import Submission, Standup, db
 from app.utils import build_standup
 
@@ -33,15 +38,7 @@ def interactive_endpoint():
         code = e.response["error"]
         return make_response(f"Failed to open a modal due to {code}", 200)
 
-    return make_response("", 404)
-
-
-def generate_standup_modal() -> dict:
-    standup_modal = dict(
-        trigger_id=request.form.get("trigger_id"), view=STANDUP_MODAL_TEMPLATE
-    )
-
-    return standup_modal
+    return make_response("invalid request", 403)
 
 
 @app.route("/slack/submit_standup/", methods=["POST"])
@@ -67,9 +64,13 @@ def standup_modal():
 def publish_standup():
 
     try:
-        todays_datetime = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
+        todays_datetime = datetime(
+            datetime.today().year, datetime.today().month, datetime.today().day
+        )
 
-        submissions = Submission.query.filter(Submission.created_at >= todays_datetime).all()
+        submissions = Submission.query.filter(
+            Submission.created_at >= todays_datetime
+        ).all()
         client.chat_postMessage(
             channel=STANDUP_CHANNEL_ID, blocks=build_standup(submissions)
         )
@@ -79,9 +80,53 @@ def publish_standup():
         return make_response("Failed", 200)
 
 
-@app.route("/slack/delete_standup/", methods=["DELETE"])
+@app.route("/api/add_standup/", methods=["POST"])
+def add_standup():
+    payload = request.json
+    if payload:
+        standup = Standup(**payload)
+        db.session.add(standup)
+        db.session.commit()
+        return jsonify({"success": True})
+    return jsonify({"success": False})
+
+
+@app.route("/api/update_standup/", methods=["PUT"])
+def update_standup():
+    payload = request.json
+    if payload:
+        Standup.query.get(payload.get("id")).update(**payload)
+        db.session.commit()
+
+        return jsonify({"success": True})
+    return jsonify({"success": False})
+
+
+@app.route("/api/active_standups/", methods=["GET"])
+def active_standups():
+    status = request.args.get("status", ALL)
+
+    # remove all keys from dict starting with "_"
+    filter_keys = lambda x: {k: v for k, v in x.items() if not k.startswith("_")}
+
+    if status == ACTIVE:
+        standups = Standup.query.filter_by(is_active=True).all()
+    elif status == INACTIVE:
+        standups = Standup.query.filter_by(is_active=False).all()
+    else:
+        standups = Standup.query.all()
+
+    filtered_standups = [filter_keys(standup.__dict__) for standup in standups]
+
+    return jsonify({"success": True, "standups": filtered_standups})
+
+
+# Delete all previous submissions
+@app.route("/api/delete_submissions/", methods=["DELETE"])
 def delete_standup():
-    todays_datetime = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
+    todays_datetime = datetime(
+        datetime.today().year, datetime.today().month, datetime.today().day
+    )
     Submission.query.filter(Submission.created_at < todays_datetime).delete()
 
 
