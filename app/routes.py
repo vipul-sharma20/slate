@@ -22,6 +22,7 @@ signature_verifier = SignatureVerifier(os.environ["SLACK_SIGNING_SECRET"])
 client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 
 
+# Callback for entrypoint trigger on Slack (slash command etc.)
 @app.route("/slack/interactive-endpoint/", methods=["POST"])
 def interactive_endpoint():
     if not signature_verifier.is_valid_request(request.get_data(), request.headers):
@@ -43,6 +44,7 @@ def interactive_endpoint():
     return make_response("invalid request", 403)
 
 
+# Callback for form submission on Slack
 @app.route("/slack/submit_standup/", methods=["POST"])
 def standup_modal():
     payload = json.loads(request.form.get("payload"))
@@ -62,6 +64,7 @@ def standup_modal():
     return make_response("", 200)
 
 
+# Request to publish standup to a Slack channel
 @app.route("/slack/publish_standup/", methods=["GET"])
 def publish_standup():
 
@@ -79,9 +82,13 @@ def publish_standup():
 
         return make_response("", 200)
     except SlackApiError as e:
-        return make_response("Failed", 200)
+        code = e.response["error"]
+        return make_response(f"Failed due to {code}", 200)
 
 
+# APIs start here
+
+# Add a new standup to DB
 @app.route("/api/add_standup/", methods=["POST"])
 def add_standup():
     payload = request.json
@@ -93,6 +100,7 @@ def add_standup():
     return jsonify({"success": False})
 
 
+# Update an existing standup
 @app.route("/api/update_standup/", methods=["PUT"])
 def update_standup():
     payload = request.json
@@ -104,7 +112,8 @@ def update_standup():
     return jsonify({"success": False})
 
 
-@app.route("/api/active_standups/", methods=["GET"])
+# Fetch standups based on their status (active, inactive, all)
+@app.route("/api/get_standups/", methods=["GET"])
 def active_standups():
     status = request.args.get("status", ALL)
 
@@ -132,6 +141,7 @@ def delete_standup():
     Submission.query.filter(Submission.created_at < todays_datetime).delete()
 
 
+# Health check for the server
 @app.route("/health/", methods=["GET"])
 def health_check():
     return make_response("Alive!", 200)

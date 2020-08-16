@@ -7,6 +7,7 @@ from app.constants import (
 )
 
 
+# Format standups in the Slack's block syntax
 def build_standup(submissions) -> list:
     formatted_standup: dict = {}
     standup_user_section = STANDUP_USER_SECTION
