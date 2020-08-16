@@ -13,11 +13,9 @@ def build_standup(submissions) -> list:
     standup_user_section = STANDUP_USER_SECTION
 
     formatted_standup: list = []
+    formatted_standup.append(STANDUP_INFO_SECTION)
 
     for submission in submissions:
-        formatted_standup.append(STANDUP_INFO_SECTION)
-        formatted_standup.append(STANDUP_SECTION_DIVIDER)
-
         standup_user_section["text"]["text"] = f"<@{submission.user_id}>"
         formatted_standup.append(standup_user_section)
 
