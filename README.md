@@ -68,6 +68,9 @@ data generated as a standup using the APIs (doc below). The application will
 fetch all the blocks used in the modal and display it appropriately while
 publishing to a channel.
 
+Block Kit sample shown in screenshot can be found here: [https://bit.ly/340PukR][5]
+Screenshot for the same Block Kit sample is [here][6]
+
 ## Usage
 
 Use the slash command to trigger with the standup you want to fill
@@ -123,3 +126,5 @@ Some TODOs/scribbles on what can be a few good features:
 [2]: https://i.imgur.com/Ns4YLd2.png
 [3]: https://www.getpostman.com/collections/c179a577fde7b13229f4
 [4]: https://api.slack.com/surfaces#modals
+[5]: https://bit.ly/340PukR
+[6]: https://i.imgur.com/l94Tg4U.png
