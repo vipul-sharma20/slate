@@ -1,8 +1,7 @@
 # slack-standup
 
-Backend application for Slack based standups. This is a Flask server
-application to handle Slack callbacks, create/submit standups, report to a
-channel etc.
+An application for Slack based standups. This is a Flask server application to
+handle Slack callbacks, create/submit standups, report to a channel etc.
 
 Check usage and API further in the README.
 
@@ -32,7 +31,7 @@ Check usage and API further in the README.
 * Create a new standup app in your Slack workspace
 * Generate tokens and secrets
 * Create slash command to trigger the modal (eg: `/standup`)
-* Configure the HTTP URL for the slash command to: `http://127.0.0.0:5000/slack/entrypoint-trigger/`. Replace `127.0.0.1:5000` with your deployment host/port.
+* Configure the HTTP URL for the slash command to: `http://127.0.0.0:5000/slack/standup-trigger/`. Replace `127.0.0.1:5000` with your deployment host/port.
 * Add HTTP URL in the "Interactivity & Shortcuts" to handle the form submission.
     * Enable "Interactivity"
     * URL: `http://127.0.0.1:5000/slack/submit_standup/`. Replace `127.0.0.1:5000` with your deployment host/port.
