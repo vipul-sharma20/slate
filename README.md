@@ -45,6 +45,10 @@ export SQLALCHEMY_DATABASE_URI="sqlite:////path/to/standup.db"
 export STANDUP_CHANNEL_ID="C0XXXXXXXXX"  # Channel where submissions will be posted
 ```
 
+### Docker
+
+`docker pull vipul20/slack-standup:latest`
+
 ## Standup Form / Modal
 
 The Slack form/modal can be built using the Block Kit Builder.
