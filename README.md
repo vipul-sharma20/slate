@@ -5,7 +5,7 @@ handle Slack callbacks, create/submit standups, report to a channel etc.
 
 Check usage and API further in the README.
 
-# Screenshots
+## Screenshots
 
 <p align="center">
     <b>Slash command</b><br/><br/>
@@ -26,7 +26,7 @@ Check usage and API further in the README.
     <img src="https://i.imgur.com/Ns4YLd2.png" />
 </p>
 
-# Configuration
+## Configuration
 
 * Create a new standup app in your Slack workspace
 * Generate tokens and secrets
@@ -45,7 +45,7 @@ export SQLALCHEMY_DATABASE_URI="sqlite:////path/to/standup.db"
 export STANDUP_CHANNEL_ID="C0XXXXXXXXX"  # Channel where submissions will be posted
 ```
 
-# Standup Form / Modal
+## Standup Form / Modal
 
 The Slack form/modal can be built using the Block Kit Builder.
 
@@ -58,7 +58,7 @@ data generated as a standup using the APIs (doc below). The application will
 fetch all the blocks used in the modal and display it appropriately while
 publishing to a channel.
 
-# Usage
+## Usage
 
 Use the slash command to trigger with the standup you want to fill
 
@@ -66,7 +66,7 @@ Use the slash command to trigger with the standup you want to fill
 
 This will open any standup which is added for `engg`
 
-# DB
+## DB
 
 This application uses SQLite DB which can be replaced with any other DB by the
 users of this repo. I am using SQLAlchemy as the ORM.
@@ -81,23 +81,23 @@ users of this repo. I am using SQLAlchemy as the ORM.
     * `username`: Slack username of the submitter
     * `standup_submission`: The standup content submitted
 
-# API
+## API
 
 There are APIs to fetch, create, update and delete standup forms. These can be
 used to integrate with a UI application.
 
 For API usage and examples, please check the Postman [collection][3]
 
-# Reporting
+## Reporting
 
 Currently, there's a single GET API endpoint which can be scheduled as a cron
 to report all the submitted standups in a channel: `/slack/publish_standup/`
 
-# License
+## License
 
 MIT
 
-# TODO
+## TODO
 
 Some TODOs/scribbles on what can be a few good features:
 
