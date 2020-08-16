@@ -22,7 +22,7 @@ Check usage and API further in the README.
 ---
 
 <p align="center">
-    <b>Channel standup reporting view</b><br/><br/>
+    <b>Reporting submissions on the channel</b><br/><br/>
     <img src="https://i.imgur.com/Ns4YLd2.png" />
 </p>
 
