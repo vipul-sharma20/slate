@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 
 from . import db
 
@@ -19,3 +19,9 @@ class Standup(db.Model):
     id = Column(Integer, primary_key=True)
     standup_blocks = Column(String(), unique=False)
     trigger = Column(String(10), unique=False)
+    is_active = Column(Boolean, unique=False, default=True)
+
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
