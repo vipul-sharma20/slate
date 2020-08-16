@@ -47,7 +47,13 @@ export STANDUP_CHANNEL_ID="C0XXXXXXXXX"  # Channel where submissions will be pos
 
 ### Docker
 
+`docker build . -t slack-standup`
+
+or
+
 `docker pull vipul20/slack-standup:latest`
+
+Check Dockerfile for help with run command
 
 ## Standup Form / Modal
 
