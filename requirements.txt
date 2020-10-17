@@ -2,3 +2,5 @@ Flask==1.1.2
 Flask-SQLAlchemy==2.4.4
 SQLAlchemy==1.3.18
 slackclient==2.8.0
+requests==2.24.0
+pytz==2020.1
