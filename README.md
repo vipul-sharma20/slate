@@ -5,7 +5,7 @@ handle Slack callbacks, create/submit standups, report to a channel etc.
 
 Check usage and API further in the README.
 
-**Note: The README is a little outdated. Checkout the latest(beta) release [here][7]**
+**Note: The README is a little outdated. Checkout the last working release(beta) [here][7]**
 
 ## Screenshots
 
