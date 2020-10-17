@@ -163,6 +163,24 @@ def delete_submissions():
     Submission.query.filter(Submission.created_at < todays_datetime).delete()
 
 
+# Notify users who have not submitted the standup yet
+@app.route("/api/notify_users/", methods=["GET"])
+def notify_users():
+    users = User.query.filter_by(is_active=True).all()
+
+    for user in users:
+        todays_datetime = datetime(
+            datetime.today().year, datetime.today().month, datetime.today().day
+        )
+
+        submission = user.submission.filter(Submission.created_at >= todays_datetime).first()
+        if submission is None:
+            client.chat_postMessage(
+                channel=user.user_id, blocks=NOTIFICATION_BLOCKS
+            )
+    return jsonify({"success": True})
+
+
 # Health check for the server
 @app.route("/health/", methods=["GET"])
 def health_check():
