@@ -5,6 +5,8 @@ handle Slack callbacks, create/submit standups, report to a channel etc.
 
 Check usage and API further in the README.
 
+**Note: The README is a little outdated. Checkout the latest(beta) release [here][7]**
+
 ## Screenshots
 
 <p align="center">
@@ -128,3 +130,4 @@ Some TODOs/scribbles on what can be a few good features:
 [4]: https://api.slack.com/surfaces#modals
 [5]: https://bit.ly/340PukR
 [6]: https://i.imgur.com/l94Tg4U.png
+[7]: https://github.com/vipul-sharma20/slack-standup/releases/tag/v0.3-beta
