@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 
-from flask import request, make_response, jsonify
+from flask import request, make_response, jsonify, redirect, url_for
 from flask import current_app as app
 from slack import WebClient
 from slack.errors import SlackApiError
@@ -13,33 +13,40 @@ from app.constants import (
     ALL,
     ACTIVE,
     INACTIVE,
+    NOTIFICATION_BLOCKS,
+    NO_USER_ERROR_MESSAGE
 )
-from app.models import Submission, Standup, db
-from app.utils import build_standup
+from app.models import Submission, Standup, User, db
+import app.utils as utils
 
 
-signature_verifier = SignatureVerifier(os.environ["SLACK_SIGNING_SECRET"])
 client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 
 
 # Callback for entrypoint trigger on Slack (slash command etc.)
-@app.route("/slack/standup-trigger/", methods=["POST"])
+@app.route("/slack/standup-trigger/", methods=["POST", "GET"])
 def standup_trigger():
-    if not signature_verifier.is_valid_request(request.get_data(), request.headers):
-        return make_response("invalid request", 403)
+    if request.method == "GET":
+        data = json.loads(request.args["messages"])
+        user_id = data.get("user", {}).get("id")
+    else:
+        data = request.form
+        user_id = data.get("user_id")
 
     try:
-        standup = Standup.query.filter_by(
-            is_active=True, trigger=request.form.get("text")
-        ).first()
+        user = User.query.filter_by(user_id=user_id).first()
+        standup = Standup.query.filter_by(id=user.standup_id).first()
 
         client.views_open(
-            trigger_id=request.form.get("trigger_id"), view=standup.standup_blocks
+            trigger_id=data.get("trigger_id"), view=standup.standup_blocks
         )
         return make_response("", 200)
     except SlackApiError as e:
         code = e.response["error"]
         return make_response(f"Failed to open a modal due to {code}", 200)
+    except AttributeError:
+        utils.send_direct_message(user_id, NO_USER_ERROR_MESSAGE)
+        return make_response("No user details or standup exists for this request", 200)
 
     return make_response("invalid request", 403)
 
@@ -49,17 +56,22 @@ def standup_trigger():
 def standup_modal():
     payload = json.loads(request.form.get("payload"))
 
-    if payload:
-        user_payload = payload.get("user", {})
-        data = dict(
-            user_id=user_payload.get("id"),
-            username=user_payload.get("username"),
-            standup_submission=json.dumps(payload.get("view")),
+    # Triggered by action button click
+    if payload.get("type") == "block_actions":
+        return redirect(
+            url_for("standup_trigger", messages=request.form.get("payload"))
         )
 
-        submission = Submission(**data)
+    if payload and utils.is_submission_eligible(payload):
+        user_payload = payload.get("user", {})
+        data = dict(standup_submission=json.dumps(payload.get("view")),)
+
+        user = User.query.filter_by(user_id=user_payload.get("id")).first()
+        submission = Submission(user_id=user.id, **data)
         db.session.add(submission)
         db.session.commit()
+
+    utils.after_submission(submission, payload)
 
     return make_response("", 200)
 
@@ -76,11 +88,11 @@ def publish_standup():
         submissions = Submission.query.filter(
             Submission.created_at >= todays_datetime
         ).all()
-        client.chat_postMessage(
-            channel=STANDUP_CHANNEL_ID, blocks=build_standup(submissions)
-        )
+        # client.chat_postMessage(
+        #     channel=STANDUP_CHANNEL_ID, blocks=build_standup(submissions)
+        # )
 
-        return make_response("", 200)
+        return make_response(json.dumps(utils.build_standup(submissions)), 200)
     except SlackApiError as e:
         code = e.response["error"]
         return make_response(f"Failed due to {code}", 200)
