@@ -1,17 +1,36 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Boolean
+import pytz
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 
 from . import db
 
 
-class Submission(db.Model):
-    __tablename__ = 'submission'
+class User(db.Model):
+    __tablename__ = "user"
     id = Column(Integer, primary_key=True)
     user_id = Column(String(20), unique=False)
     username = Column(String(50), unique=False)
+    is_active = Column(Boolean, unique=False, default=True)
+    submission = relationship(
+        "Submission", lazy="dynamic", cascade="all, delete", passive_deletes=True
+    )
+    standup = relationship("Standup")
+    standup_id = Column(Integer, ForeignKey("standup.id"))
+
+
+class Submission(db.Model):
+    __tablename__ = "submission"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship("User")
     standup_submission = Column(String(), unique=False)
-    created_at = Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.now(tz=pytz.timezone("Asia/Kolkata")),
+    )
 
 
 class Standup(db.Model):
