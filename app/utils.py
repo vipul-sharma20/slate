@@ -66,7 +66,9 @@ def after_submission(submission, payload) -> None:
             channel=STANDUP_CHANNEL_ID, blocks=build_standup([submission], True)
         )
 
-    client.chat_postMessage(channel=submission.user.user_id, blocks=after_submission_message())
+    client.chat_postMessage(
+        channel=submission.user.user_id, blocks=after_submission_message()
+    )
 
 
 # Random friendly message
@@ -74,19 +76,23 @@ def after_submission_message() -> list:
     blocks = [SUBMIT_TEMPLATE_SECTION_1]
 
     if os.environ.get("CAT_MODE", 0):
-        response = requests.get(CAT_API_HOST + "/api/images/get?type=jpg&size=med&format=json", timeout=3)
+        response = requests.get(
+            CAT_API_HOST + "/api/images/get?type=jpg&size=med&format=json", timeout=3
+        )
 
         if response.ok:
             response_json = response.json()
             item_url = response_json[0].get("url")
             blocks.append(SUBMIT_TEMPLATE_SECTION_2)
 
-            blocks.append({
-                "type": "image",
-                "title": {"type": "plain_text", "text": "image", "emoji": True},
-                "image_url": f"{item_url}",
-                "alt_text": "image",
-            })
+            blocks.append(
+                {
+                    "type": "image",
+                    "title": {"type": "plain_text", "text": "image", "emoji": True},
+                    "image_url": f"{item_url}",
+                    "alt_text": "image",
+                }
+            )
     return blocks
 
 
