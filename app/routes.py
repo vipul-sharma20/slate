@@ -14,7 +14,7 @@ from app.constants import (
     ACTIVE,
     INACTIVE,
     NOTIFICATION_BLOCKS,
-    NO_USER_ERROR_MESSAGE
+    NO_USER_ERROR_MESSAGE,
 )
 from app.models import Submission, Standup, User, db
 import app.utils as utils
@@ -167,21 +167,30 @@ def delete_submissions():
 @app.route("/api/notify_users/", methods=["GET"])
 def notify_users():
     users = User.query.filter_by(is_active=True).all()
+    blocks = NOTIFICATION_BLOCKS[:]
+    eta_section = {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": f"The standup will be reported in {utils.time_left()}",
+        },
+    }
+    blocks.insert(1, eta_section)
 
     for user in users:
         todays_datetime = datetime(
             datetime.today().year, datetime.today().month, datetime.today().day
         )
 
-        submission = user.submission.filter(Submission.created_at >= todays_datetime).first()
+        submission = user.submission.filter(
+            Submission.created_at >= todays_datetime
+        ).first()
         if submission is None:
-            client.chat_postMessage(
-                channel=user.user_id, blocks=NOTIFICATION_BLOCKS
-            )
+            client.chat_postMessage(channel=user.user_id, blocks=blocks)
     return jsonify({"success": True})
 
 
 # Health check for the server
-@app.route("/health/", methods=["GET"])
+@app.route("/api/health/", methods=["GET"])
 def health_check():
     return make_response("Alive!", 200)

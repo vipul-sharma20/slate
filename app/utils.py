@@ -1,11 +1,11 @@
 import os
 import json
-import requests
+import math
 from datetime import datetime
 
+import requests
 from slack import WebClient
 
-from app.models import Submission, Standup, User, db
 from app.constants import (
     STANDUP_CHANNEL_ID,
     STANDUP_INFO_SECTION,
@@ -103,4 +103,38 @@ def send_direct_message(user_id, text) -> None:
 
 # Check if new submission is eligible
 def is_submission_eligible(payload: dict) -> bool:
+    """
+    TODO: Don't allow multiple submissions by same user on same day
+    """
     return True
+
+
+# Find how much time left to report
+def time_left() -> str:
+    text: str = ""
+
+    publish_time = datetime.strptime(
+        os.environ.get("STANDUP_PUBLISH_TIME", "15:00"), "%H:%M"
+    ).time()
+
+    publish_datetime = datetime(
+        datetime.today().year,
+        datetime.today().month,
+        datetime.today().day,
+        publish_time.hour,
+        publish_time.minute,
+    )
+
+    now = datetime.now()
+    diff = (publish_datetime - now).seconds
+
+    if diff >= 3600:
+        hours = math.floor(diff / 3600)
+        text += f"{hours} hours "
+        diff -= hours * 3600
+    if diff >= 60:
+        minutes = math.floor(diff / 60)
+        text += f"{minutes} minutes "
+        diff -= minutes * 60
+
+    return text
