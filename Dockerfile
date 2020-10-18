@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.8
 
 WORKDIR /home/slack-standup/
 
@@ -13,6 +13,6 @@ ENV SQLALCHEMY_DATABASE_URI="sqlite:////Users/vipul/submission.db"
 ENV STANDUP_CHANNEL_ID="C0XXXXXXXXX"
 ENV FLASK_APP=app
 
-CMD ["flask", "run"]
+CMD ["uwsgi", "--http-socket", ":5000", "--module", "\"app:create_app()\"", "--workers", "4"]
 
-# docker run -p 5000:5000 -v ~/standup.db:/home/slack-standup/standup.db -e SQLALCHEMY_DATABASE_URI=sqlite:////home/slack-standup/standup.db -e STANDUP_CHANNEL=C0XXXXXXXXX -e SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -e SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -i -t standup
+# docker run -p 5000:5000 -v ~/itandup.db:/home/slack-standup/standup.db -e SQLALCHEMY_DATABASE_URI=sqlite:////home/slack-standup/standup.db -e STANDUP_CHANNEL=C0XXXXXXXXX -e SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -e SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -i -t standup
