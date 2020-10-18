@@ -26,11 +26,7 @@ class Submission(db.Model):
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User")
     standup_submission = Column(String(), unique=False)
-    created_at = Column(
-        db.DateTime,
-        nullable=False,
-        default=datetime.now(tz=pytz.timezone("Asia/Kolkata")),
-    )
+    created_at = Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
 class Standup(db.Model):
