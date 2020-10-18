@@ -88,9 +88,9 @@ def publish_standup():
         submissions = Submission.query.filter(
             Submission.created_at >= todays_datetime
         ).all()
-        # client.chat_postMessage(
-        #     channel=STANDUP_CHANNEL_ID, blocks=build_standup(submissions)
-        # )
+        client.chat_postMessage(
+            channel=STANDUP_CHANNEL_ID, text="Standup complete", blocks=utils.build_standup(submissions)
+        )
 
         return make_response(json.dumps(utils.build_standup(submissions)), 200)
     except SlackApiError as e:
