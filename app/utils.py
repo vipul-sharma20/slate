@@ -114,7 +114,7 @@ def time_left() -> str:
     text: str = ""
 
     publish_time = datetime.strptime(
-        os.environ.get("STANDUP_PUBLISH_TIME", "15:00"), "%H:%M"
+        os.environ.get("STANDUP_PUBLISH_TIME", "13:00"), "%H:%M"
     ).time()
 
     publish_datetime = datetime(
