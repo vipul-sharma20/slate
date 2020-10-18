@@ -168,11 +168,13 @@ def delete_submissions():
 def notify_users():
     users = User.query.filter_by(is_active=True).all()
     blocks = NOTIFICATION_BLOCKS[:]
+    text = f"The standup will be reported in {utils.time_left()}"
+
     eta_section = {
         "type": "section",
         "text": {
             "type": "mrkdwn",
-            "text": f"The standup will be reported in {utils.time_left()}",
+            "text": text,
         },
     }
     blocks.insert(1, eta_section)
@@ -186,7 +188,7 @@ def notify_users():
             Submission.created_at >= todays_datetime
         ).first()
         if submission is None:
-            client.chat_postMessage(channel=user.user_id, blocks=blocks)
+            client.chat_postMessage(channel=user.user_id, text=text, blocks=blocks)
     return jsonify({"success": True})
 
 
