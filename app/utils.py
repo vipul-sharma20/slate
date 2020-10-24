@@ -22,14 +22,14 @@ client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 # Format standups in the Slack's block syntax
 def build_standup(submissions, is_single=False) -> list:
     formatted_standup: list = []
-    standup_user_section = STANDUP_USER_SECTION
 
     if not is_single:
         formatted_standup.append(STANDUP_INFO_SECTION)
 
     for submission in submissions:
+        standup_user_section = {"type": "section", "text": {"type": "mrkdwn", "text": ""}}
         standup_user_section["text"]["text"] = f"<@{submission.user.user_id}>"
-        formatted_standup.append({**standup_user_section})
+        formatted_standup.append(standup_user_section)
 
         standup_json = json.loads(submission.standup_submission)
         blocks = standup_json.get("blocks", [])
