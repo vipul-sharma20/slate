@@ -100,6 +100,18 @@ def publish_standup():
 
 # APIs start here
 
+# Add user to DB
+@app.route("/api/add_user/", methods=["POST"])
+def add_user():
+    payload = request.json
+    if payload:
+        user = User(**payload)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({"sucess": True})
+    return jsonify({"sucess": False})
+
+
 # Add a new standup to DB
 @app.route("/api/add_standup/", methods=["POST"])
 def add_standup():
