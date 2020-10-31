@@ -121,13 +121,10 @@ def add_user():
 
 
 # Get user by username
-@app.route("/api/get_user/", methods=["GET"])
-def get_user():
-    username = request.args.get("username")
-    if username:
-        user = User.query.filter_by(username=username).first()
-        return jsonify({"success": True, "user": utils.prepare_user_response(user)})
-    return jsonify({"sucess": False})
+@app.route("/api/get_user/<username>/", methods=["GET"])
+def get_user(username):
+    user = User.query.filter_by(username=username).first()
+    return jsonify({"success": True, "user": utils.prepare_user_response(user)})
 
 
 # Get all users
