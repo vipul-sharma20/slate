@@ -293,12 +293,54 @@ def notify_users():
 def get_submission():
     if utils.is_get_submission_valid(**request.args):
         user_id = request.args.get("id")
-        submissions = (
-            Submission.query.filter_by(user_id=user_id)
-            .order_by(Submission.created_at.desc())
-            .limit(50)
-            .all()
-        )
+
+        start_date = request.args.get("start_date")
+        end_date = request.args.get("end_date")
+
+        try:
+            if start_date:
+                start_date = datetime.strptime(start_date, "%Y-%m-%d")
+            if end_date:
+                end_date = datetime.strptime(end_date, "%Y-%m-%d")
+        except ValueError:
+            return jsonify(
+                {
+                    "success": False,
+                    "reason": "Invalid date format. Use format yyyy-mm-dd",
+                }
+            )
+
+        if start_date and end_date:
+            submissions = (
+                Submission.query.filter_by(user_id=user_id)
+                .filter(
+                    Submission.created_at >= start_date,
+                    Submission.created_at <= end_date,
+                )
+                .order_by(Submission.created_at.desc())
+                .all()
+            )
+        elif start_date:
+            submissions = (
+                Submission.query.filter_by(user_id=user_id)
+                .filter(Submission.created_at >= start_date)
+                .order_by(Submission.created_at.desc())
+                .all()
+            )
+        elif end_date:
+            submissions = (
+                Submission.query.filter_by(user_id=user_id)
+                .filter(Submission.created_at <= end_date)
+                .order_by(Submission.created_at.desc())
+                .all()
+            )
+        else:
+            submissions = (
+                Submission.query.filter_by(user_id=user_id)
+                .order_by(Submission.created_at.desc())
+                .limit(50)
+                .all()
+            )
 
         return jsonify(
             {
