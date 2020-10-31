@@ -183,10 +183,32 @@ def update_standup():
 @app.route("/api/get_standups/", methods=["GET"])
 def active_standups():
     status = request.args.get("status", ALL)
+    standup_id = request.args.get("id", None)
 
     # remove all keys from dict starting with "_"
     filter_keys = lambda x: {k: v for k, v in x.items() if not k.startswith("_")}
 
+    # If id in request args then return standup for id
+    if standup_id.isnumeric():
+        try:
+            standup = Standup.query.filter_by(id=standup_id).first()
+            return jsonify(
+                {
+                    "success": True,
+                    "standup": utils.format_standup(filter_keys(standup.__dict__)),
+                }
+            )
+        except:
+            return jsonify(
+                {
+                    "success": False,
+                    "reason": f"Standup for id {standup_id} does not exist",
+                }
+            )
+    elif standup_id:
+        return jsonify({"success": False, "reason": "Incorrect standup_id."})
+
+    # If no id in request args then return standup for status
     if status == ACTIVE:
         standups = Standup.query.filter_by(is_active=True).all()
     elif status == INACTIVE:
@@ -194,7 +216,9 @@ def active_standups():
     else:
         standups = Standup.query.all()
 
-    filtered_standups = [filter_keys(standup.__dict__) for standup in standups]
+    filtered_standups = [
+        utils.format_standup(filter_keys(standup.__dict__)) for standup in standups
+    ]
 
     return jsonify(
         {"success": True, "standups": utils.format_standups(filtered_standups),}

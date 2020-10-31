@@ -163,22 +163,18 @@ def time_left() -> str:
     return text
 
 
-# Show pretty dump of questions for standups
-def format_standups(standups) -> list:
-    pretty_standup_list: list = []
+# Show pretty dump of questions from block kit for standup
+def format_standup(standup) -> dict:
+    pretty_dict: dict = {**standup}
+    pretty_dict["questions"] = []
 
-    for standup in standups:
-        pretty_dict: dict = {**standup}
-        pretty_dict["questions"] = []
+    standup_blocks = json.loads(standup["standup_blocks"])
+    blocks = filter(lambda x: x["type"] == "input", standup_blocks["blocks"])
 
-        standup_blocks = json.loads(standup["standup_blocks"])
-        blocks = filter(lambda x: x["type"] == "input", standup_blocks["blocks"])
+    for block in blocks:
+        pretty_dict["questions"].append(block["label"]["text"])
 
-        for block in blocks:
-            pretty_dict["questions"].append(block["label"]["text"])
-
-        pretty_standup_list.append(pretty_dict)
-    return pretty_standup_list
+    return pretty_dict
 
 
 # Convert list of questions to block kit form
