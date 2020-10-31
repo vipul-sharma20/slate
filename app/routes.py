@@ -6,7 +6,6 @@ from flask import request, make_response, jsonify, redirect, url_for
 from flask import current_app as app
 from slack import WebClient
 from slack.errors import SlackApiError
-from slack.signature import SignatureVerifier
 
 from app.constants import (
     STANDUP_CHANNEL_ID,
@@ -15,6 +14,8 @@ from app.constants import (
     INACTIVE,
     NOTIFICATION_BLOCKS,
     NO_USER_ERROR_MESSAGE,
+    POST_PUBLISH_STATS,
+    NO_USER_SUBMIT_MESSAGE,
 )
 from app.models import Submission, Standup, User, db
 import app.utils as utils
@@ -91,6 +92,11 @@ def publish_standup():
         client.chat_postMessage(
             channel=STANDUP_CHANNEL_ID, text="Standup complete", blocks=utils.build_standup(submissions)
         )
+        if POST_PUBLISH_STATS:
+            no_submit_users = utils.post_publish_stat()
+            message = f"{NO_USER_SUBMIT_MESSAGE} {', '.join(no_submit_users)}"
+
+            client.chat_postMessage(channel=STANDUP_CHANNEL_ID, text=message)
 
         return make_response(json.dumps(utils.build_standup(submissions)), 200)
     except SlackApiError as e:
@@ -208,3 +214,5 @@ def notify_users():
 @app.route("/api/health/", methods=["GET"])
 def health_check():
     return make_response("Alive!", 200)
+
+

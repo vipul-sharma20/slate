@@ -9,6 +9,9 @@ CAT_API_HOST = "https://api.thecatapi.com"
 NO_USER_ERROR_MESSAGE = "Your user details or standup for your user doesn't exist in the database."
 
 STANDUP_CHANNEL_ID = os.environ.get("STANDUP_CHANNEL_ID")
+POST_PUBLISH_STATS = os.environ.get("POST_PUBLISH_STATS", 0)
+
+NO_USER_SUBMIT_MESSAGE = "Didn't hear from"
 
 STANDUP_INFO_SECTION = {
     "type": "section",

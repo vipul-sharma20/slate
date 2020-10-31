@@ -6,10 +6,10 @@ from datetime import datetime
 import requests
 from slack import WebClient
 
+from app.models import User, Submission
 from app.constants import (
     STANDUP_CHANNEL_ID,
     STANDUP_INFO_SECTION,
-    STANDUP_USER_SECTION,
     STANDUP_SECTION_DIVIDER,
     SUBMIT_TEMPLATE_SECTION_1,
     SUBMIT_TEMPLATE_SECTION_2,
@@ -107,6 +107,26 @@ def is_submission_eligible(payload: dict) -> bool:
     TODO: Don't allow multiple submissions by same user on same day
     """
     return True
+
+
+# Post standup user stats after publish
+def post_publish_stat() -> list:
+    no_submit_users: list = []
+
+    users = User.query.filter_by(is_active=True).all()
+
+    for user in users:
+        todays_datetime = datetime(
+            datetime.today().year, datetime.today().month, datetime.today().day
+        )
+
+        submission = user.submission.filter(
+            Submission.created_at >= todays_datetime
+        ).first()
+        if submission is None:
+            no_submit_users.append(f"<@{user.user_id}>")
+
+    return no_submit_users
 
 
 # Find how much time left to report
