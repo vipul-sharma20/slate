@@ -27,7 +27,10 @@ def build_standup(submissions, is_single=False) -> list:
         formatted_standup.append(STANDUP_INFO_SECTION)
 
     for submission in submissions:
-        standup_user_section = {"type": "section", "text": {"type": "mrkdwn", "text": ""}}
+        standup_user_section = {
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": ""},
+        }
         standup_user_section["text"]["text"] = f"<@{submission.user.user_id}>"
         formatted_standup.append(standup_user_section)
 
@@ -176,4 +179,43 @@ def format_standups(standups) -> list:
 
         pretty_standup_list.append(pretty_dict)
     return pretty_standup_list
+
+
+# Convert list of questions to block kit form
+def questions_to_blockkit(questions: list) -> dict:
+    blockkit_form = {
+        "title": {"type": "plain_text", "text": "Daily Standup", "emoji": True},
+        "submit": {"type": "plain_text", "text": "Submit", "emoji": True},
+        "type": "modal",
+        "close": {"type": "plain_text", "text": "Cancel", "emoji": True},
+        "blocks": [],
+    }
+
+    for question in questions:
+        block_template = {
+            "type": "input",
+            "label": {"type": "plain_text", "text": "", "emoji": True},
+            "element": {"type": "plain_text_input", "multiline": True},
+        }
+        block_template["label"]["text"] = question
+        blockkit_form["blocks"].append(block_template)
+    return blockkit_form
+
+
+# prepare data for Standup table
+def prepare_standup_table_data(**payload):
+    data: dict = {}
+
+    data["is_active"] = payload.get("is_active", False)
+    data["standup_blocks"] = json.dumps(payload.get("standup_blocks", {}))
+    data["trigger"] = payload.get("trigger", "")
+
+    return data
+
+
+# validate /api/add_standup/ API payload
+def is_standup_valid(**payload):
+    if all(key in payload for key in ["questions", "is_active", "trigger"]):
+        return True
+    return False
 

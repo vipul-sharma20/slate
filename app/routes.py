@@ -124,12 +124,30 @@ def add_user():
 @app.route("/api/add_standup/", methods=["POST"])
 def add_standup():
     payload = request.json
-    if payload:
-        standup = Standup(**payload)
-        db.session.add(standup)
-        db.session.commit()
-        return jsonify({"success": True})
-    return jsonify({"success": False})
+    if utils.is_standup_valid(**payload):
+        payload["standup_blocks"] = utils.questions_to_blockkit(
+            payload.get("questions")
+        )
+        data = utils.prepare_standup_table_data(**payload)
+
+        try:
+            standup = Standup(**data)
+            db.session.add(standup)
+            db.session.commit()
+            return jsonify({"success": True})
+        except:
+            return jsonify(
+                {
+                    "success": False,
+                    "reason": "Could not save the submitted standup to DB",
+                }
+            )
+    return jsonify(
+        {
+            "success": False,
+            "reason": "Incorrect payload. Required: questions, is_active, trigger",
+        }
+    )
 
 
 # Update an existing standup
@@ -162,10 +180,7 @@ def active_standups():
     filtered_standups = [filter_keys(standup.__dict__) for standup in standups]
 
     return jsonify(
-        {
-            "success": True,
-            "standups": utils.format_standups(filtered_standups),
-        }
+        {"success": True, "standups": utils.format_standups(filtered_standups),}
     )
 
 
