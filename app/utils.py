@@ -224,6 +224,8 @@ def prepare_user_submission(submission) -> dict:
     submission_response: dict = {}
     submission_response["created_at"] = submission.created_at
     submission_response["submission_id"] = submission.id
+    submission_response["user_id"] = submission.user_id
+    submission_response["username"] = submission.user.username
     submission_response["submission"] = []
 
     response_json = json.loads(submission.standup_submission)
