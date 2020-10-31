@@ -158,3 +158,22 @@ def time_left() -> str:
         diff -= minutes * 60
 
     return text
+
+
+# Show pretty dump of questions for standups
+def format_standups(standups) -> list:
+    pretty_standup_list: list = []
+
+    for standup in standups:
+        pretty_dict: dict = {**standup}
+        pretty_dict["questions"] = []
+
+        standup_blocks = json.loads(standup["standup_blocks"])
+        blocks = filter(lambda x: x["type"] == "input", standup_blocks["blocks"])
+
+        for block in blocks:
+            pretty_dict["questions"].append(block["label"]["text"])
+
+        pretty_standup_list.append(pretty_dict)
+    return pretty_standup_list
+

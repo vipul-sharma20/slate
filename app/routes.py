@@ -90,7 +90,9 @@ def publish_standup():
             Submission.created_at >= todays_datetime
         ).all()
         client.chat_postMessage(
-            channel=STANDUP_CHANNEL_ID, text="Standup complete", blocks=utils.build_standup(submissions)
+            channel=STANDUP_CHANNEL_ID,
+            text="Standup complete",
+            blocks=utils.build_standup(submissions),
         )
         if POST_PUBLISH_STATS:
             no_submit_users = utils.post_publish_stat()
@@ -159,7 +161,12 @@ def active_standups():
 
     filtered_standups = [filter_keys(standup.__dict__) for standup in standups]
 
-    return jsonify({"success": True, "standups": filtered_standups})
+    return jsonify(
+        {
+            "success": True,
+            "standups": utils.format_standups(filtered_standups),
+        }
+    )
 
 
 # Delete a standup
@@ -190,10 +197,7 @@ def notify_users():
 
     eta_section = {
         "type": "section",
-        "text": {
-            "type": "mrkdwn",
-            "text": text,
-        },
+        "text": {"type": "mrkdwn", "text": text,},
     }
     blocks.insert(1, eta_section)
 
@@ -214,5 +218,4 @@ def notify_users():
 @app.route("/api/health/", methods=["GET"])
 def health_check():
     return make_response("Alive!", 200)
-
 
