@@ -196,7 +196,7 @@ def update_standup():
 
 # Fetch standups based on their status (active, inactive, all)
 @app.route("/api/get_standups/", methods=["GET"])
-def active_standups():
+def get_standups():
     status = request.args.get("status", ALL)
     standup_id = request.args.get("id", None)
 
@@ -286,68 +286,116 @@ def notify_users():
 
 
 # Get submission for user id
-@app.route("/api/get_submission/", methods=["GET"])
-def get_submission():
-    if utils.is_get_submission_valid(**request.args):
-        user_id = request.args.get("id")
+@app.route("/api/get_submission/<user_id>/", methods=["GET"])
+def get_submission(user_id):
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
 
-        start_date = request.args.get("start_date")
-        end_date = request.args.get("end_date")
-
-        try:
-            if start_date:
-                start_date = datetime.strptime(start_date, "%Y-%m-%d")
-            if end_date:
-                end_date = datetime.strptime(end_date, "%Y-%m-%d")
-        except ValueError:
-            return jsonify(
-                {
-                    "success": False,
-                    "reason": "Invalid date format. Use format yyyy-mm-dd",
-                }
-            )
-
-        if start_date and end_date:
-            submissions = (
-                Submission.query.filter_by(user_id=user_id)
-                .filter(
-                    Submission.created_at >= start_date,
-                    Submission.created_at <= end_date,
-                )
-                .order_by(Submission.created_at.desc())
-                .all()
-            )
-        elif start_date:
-            submissions = (
-                Submission.query.filter_by(user_id=user_id)
-                .filter(Submission.created_at >= start_date)
-                .order_by(Submission.created_at.desc())
-                .all()
-            )
-        elif end_date:
-            submissions = (
-                Submission.query.filter_by(user_id=user_id)
-                .filter(Submission.created_at <= end_date)
-                .order_by(Submission.created_at.desc())
-                .all()
-            )
-        else:
-            submissions = (
-                Submission.query.filter_by(user_id=user_id)
-                .order_by(Submission.created_at.desc())
-                .limit(50)
-                .all()
-            )
-
+    try:
+        if start_date:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        if end_date:
+            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    except ValueError:
         return jsonify(
             {
-                "success": True,
-                "submissions": [
-                    utils.prepare_user_submission(submission)
-                    for submission in submissions
-                ],
+                "success": False,
+                "reason": "Invalid date format. Use format yyyy-mm-dd",
             }
         )
+
+    if start_date and end_date:
+        submissions = (
+            Submission.query.filter_by(user_id=user_id)
+            .filter(
+                Submission.created_at >= start_date,
+                Submission.created_at <= end_date,
+            )
+            .order_by(Submission.created_at.desc())
+            .all()
+        )
+    elif start_date:
+        submissions = (
+            Submission.query.filter_by(user_id=user_id)
+            .filter(Submission.created_at >= start_date)
+            .order_by(Submission.created_at.desc())
+            .all()
+        )
+    elif end_date:
+        submissions = (
+            Submission.query.filter_by(user_id=user_id)
+            .filter(Submission.created_at <= end_date)
+            .order_by(Submission.created_at.desc())
+            .all()
+        )
+    else:
+        submissions = (
+            Submission.query.filter_by(user_id=user_id)
+            .order_by(Submission.created_at.desc())
+            .limit(50)
+            .all()
+        )
+
+    return jsonify(
+        {
+            "success": True,
+            "submissions": [
+                utils.prepare_user_submission(submission)
+                for submission in submissions
+            ],
+        }
+    )
+
+
+# Get submissions
+@app.route("/api/get_submissions/", methods=["GET"])
+def get_submissions():
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+
+    try:
+        if start_date:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        if end_date:
+            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    except ValueError:
+        return jsonify(
+            {"success": False, "reason": "Invalid date format. Use format yyyy-mm-dd",}
+        )
+
+    if start_date and end_date:
+        submissions = (
+            Submission.query.filter(
+                Submission.created_at >= start_date, Submission.created_at <= end_date,
+            )
+            .order_by(Submission.created_at.desc())
+            .all()
+        )
+    elif start_date:
+        submissions = (
+            Submission.query.filter(Submission.created_at >= start_date)
+            .order_by(Submission.created_at.desc())
+            .all()
+        )
+    elif end_date:
+        submissions = (
+            Submission.query.filter(Submission.created_at <= end_date)
+            .order_by(Submission.created_at.desc())
+            .all()
+        )
+    else:
+        submissions = (
+            Submission.query.order_by(Submission.created_at.desc()).limit(50).all()
+        )
+
+    return jsonify(
+        {
+            "success": True,
+            "submissions": [
+                utils.prepare_user_submission(submission) for submission in submissions
+            ],
+        }
+    )
 
 
 # Health check for the server
