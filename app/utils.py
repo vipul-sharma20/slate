@@ -219,6 +219,33 @@ def prepare_user_response(user):
     }
 
 
+# Prepare response for get user submission API
+def prepare_user_submission(submission) -> dict:
+    submission_response: dict = {}
+    submission_response["created_at"] = submission.created_at
+    submission_response["submission_id"] = submission.id
+    submission_response["submission"] = []
+
+    response_json = json.loads(submission.standup_submission)
+    blocks = response_json.get("blocks", [])
+    blocks = filter(lambda x: x["type"] == "input", blocks)
+
+    state_dict = response_json.get("state", {})
+
+    for block in blocks:
+        block_id = block["block_id"]
+        action_id = block["element"]["action_id"]
+
+        question = block["label"]["text"]
+        answer = state_dict["values"][block_id][action_id]["value"]
+
+        submission_response["submission"].append(
+            {"question": question, "answer": answer}
+        )
+
+    return submission_response
+
+
 # validate /api/add_standup/ API payload
 def is_standup_valid(**payload):
     if all(key in payload for key in ["questions", "is_active", "trigger"]):

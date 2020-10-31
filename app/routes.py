@@ -288,13 +288,27 @@ def notify_users():
     return jsonify({"success": True})
 
 
-# Get user submissions
+# Get submission for user id
 @app.route("/api/get_submission/", methods=["GET"])
 def get_submission():
     if utils.is_get_submission_valid(**request.args):
         user_id = request.args.get("id")
+        submissions = (
+            Submission.query.filter_by(user_id=user_id)
+            .order_by(Submission.created_at.desc())
+            .limit(50)
+            .all()
+        )
 
-        return jsonify({"success": True})
+        return jsonify(
+            {
+                "success": True,
+                "submissions": [
+                    utils.prepare_user_submission(submission)
+                    for submission in submissions
+                ],
+            }
+        )
 
 
 # Health check for the server
