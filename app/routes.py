@@ -156,7 +156,12 @@ def update_standup():
     payload = request.json
     if utils.is_standup_valid(**payload):
         try:
-            Standup.query.get(payload.get("id")).update(**payload)
+            payload["standup_blocks"] = utils.questions_to_blockkit(
+                payload.get("questions")
+            )
+            data = utils.prepare_standup_table_data(**payload)
+
+            Standup.query.get(payload.get("id")).update(**data)
             db.session.commit()
         except:
             return jsonify(
