@@ -120,6 +120,24 @@ def add_user():
     return jsonify({"sucess": False})
 
 
+# Get user by username
+@app.route("/api/get_user/", methods=["GET"])
+def get_user():
+    username = request.args.get("username")
+    if username:
+        user = User.query.filter_by(username=username).first()
+        return jsonify({"success": True, "user": utils.prepare_user_response(user)})
+    return jsonify({"sucess": False})
+
+
+# Get all users
+@app.route("/api/get_users/", methods=["GET"])
+def get_users():
+    users = User.query.all()
+    users_response = [utils.prepare_user_response(user) for user in users]
+    return jsonify({"success": True, "users": users_response})
+
+
 # Add a new standup to DB
 @app.route("/api/add_standup/", methods=["POST"])
 def add_standup():
@@ -268,6 +286,15 @@ def notify_users():
         if submission is None:
             client.chat_postMessage(channel=user.user_id, text=text, blocks=blocks)
     return jsonify({"success": True})
+
+
+# Get user submissions
+@app.route("/api/get_submission/", methods=["GET"])
+def get_submission():
+    if utils.is_get_submission_valid(**request.args):
+        user_id = request.args.get("id")
+
+        return jsonify({"success": True})
 
 
 # Health check for the server

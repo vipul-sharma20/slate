@@ -209,9 +209,25 @@ def prepare_standup_table_data(**payload):
     return data
 
 
+# Prepare response for fetch user APIs
+def prepare_user_response(user):
+    return {
+        "id": user.id,
+        "username": user.username,
+        "is_active": user.is_active,
+        "standup_id": user.standup_id,
+    }
+
+
 # validate /api/add_standup/ API payload
 def is_standup_valid(**payload):
     if all(key in payload for key in ["questions", "is_active", "trigger"]):
         return True
     return False
 
+
+# validate /api/get_submission/ API params
+def is_get_submission_valid(**params):
+    if all(key in params for key in ["id"]):
+        return True
+    return False
