@@ -134,7 +134,8 @@ def add_standup():
             standup = Standup(**data)
             db.session.add(standup)
             db.session.commit()
-            return jsonify({"success": True})
+
+            return jsonify({"success": True, "standup_id": standup.id})
         except:
             return jsonify(
                 {
