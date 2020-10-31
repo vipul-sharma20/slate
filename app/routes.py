@@ -154,12 +154,23 @@ def add_standup():
 @app.route("/api/update_standup/", methods=["PUT"])
 def update_standup():
     payload = request.json
-    if payload:
-        Standup.query.get(payload.get("id")).update(**payload)
-        db.session.commit()
-
-        return jsonify({"success": True})
-    return jsonify({"success": False})
+    if utils.is_standup_valid(**payload):
+        try:
+            Standup.query.get(payload.get("id")).update(**payload)
+            db.session.commit()
+        except:
+            return jsonify(
+                {
+                    "success": False,
+                    "reason": "Could not save the updated standup to DB",
+                }
+            )
+    return jsonify(
+        {
+            "success": False,
+            "reason": "Incorrect payload. Required: questions, is_active, trigger",
+        }
+    )
 
 
 # Fetch standups based on their status (active, inactive, all)
