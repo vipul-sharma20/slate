@@ -194,12 +194,8 @@ def update_standup():
     )
 
 
-# Fetch standups based on their status (active, inactive, all)
-@app.route("/api/get_standups/", methods=["GET"])
-def get_standups():
-    status = request.args.get("status", ALL)
-    standup_id = request.args.get("id", None)
-
+@app.route("/api/get_standup/<standup_id>/", methods=["GET"])
+def get_standup(standup_id):
     # remove all keys from dict starting with "_"
     filter_keys = lambda x: {k: v for k, v in x.items() if not k.startswith("_")}
 
@@ -220,10 +216,17 @@ def get_standups():
                     "reason": f"Standup for id {standup_id} does not exist",
                 }
             )
-    elif standup_id:
-        return jsonify({"success": False, "reason": "Incorrect standup_id."})
+    return jsonify({"success": False, "reason": "Incorrect standup_id."})
 
-    # If no id in request args then return standup for status
+
+# Fetch standups based on their status (active, inactive, all)
+@app.route("/api/get_standups/", methods=["GET"])
+def get_standups():
+    status = request.args.get("status", ALL)
+
+    # remove all keys from dict starting with "_"
+    filter_keys = lambda x: {k: v for k, v in x.items() if not k.startswith("_")}
+
     if status == ACTIVE:
         standups = Standup.query.filter_by(is_active=True).all()
     elif status == INACTIVE:
