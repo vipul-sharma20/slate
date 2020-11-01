@@ -26,10 +26,10 @@ def authenticate(func):
     @wraps(func)
     def check_authorization(*args, **kwargs):
         if os.environ.get("DEBUG"):
-            func()
+            func(*args, **kwargs)
         auth_key = request.headers.get("Authorization", "")
         if redis_client.get(auth_key):
-            return func()
+            return func(*args, **kwargs)
         else:
             return jsonify(
                 {
