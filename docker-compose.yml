@@ -19,6 +19,7 @@ services:
           - STANDUP_CHANNEL_ID=XXXXXXXXXX
           - FLASK_APP=app
           - ENVIRONMENT=PROD
+          - REDIS_HOST=host.docker.internal
       volumes:
           - ~/slack.db/:/home/slack-standup/standup.db
 
