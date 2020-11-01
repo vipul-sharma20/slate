@@ -12,7 +12,7 @@ ENV SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ENV SQLALCHEMY_DATABASE_URI="sqlite:////home/slack-standup/standup.db"
 ENV STANDUP_CHANNEL_ID="C0XXXXXXXXX"
 ENV FLASK_APP=app
-ENV REDIS_HOST=host.docker.internal
+ENV REDIS_HOST=localhost
 ENV REDIS_PORT=6379
 ENV ENVIRONMENT=PROD
 
@@ -20,7 +20,7 @@ RUN flask db stamp head
 RUN flask db migrate
 RUN flask db upgrade
 
-CMD ["uwsgi", "--http-socket", ":5000", "--enable-treads", "--threads", "4", "--module", "\"app:create_app()\"", "--workers", "2", "--buffer-size", "32768"]
+CMD ["uwsgi", "--http-socket", ":5000", "--enable-threads", "--threads", "4", "--module", "app:create_app()", "--workers", "2", "--buffer-size", "32768"]
 
 # docker run -p 5000:5000 -v ~/standup.db:/home/slack-standup/standup.db -e SQLALCHEMY_DATABASE_URI=sqlite:////home/slack-standup/standup.db -e STANDUP_CHANNEL_ID=C0XXXXXXXXX -e SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -e SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -e STANDUP_PUBLISH_TIME=07:32 -i -t standup
 

@@ -11,7 +11,7 @@ services:
       build: .
       ports:
           - "5000:5000"
-      command: ["uwsgi", "--http-socket", ":5000", "--enable-treads", "--threads", "4", "--module", "\"app:create_app()\"", "--workers", "2", "--buffer-size", "32768"]
+      command: ["uwsgi", "--http-socket", ":5000", "--enable-threads", "--threads", "4", "--module", "app:create_app()", "--workers", "2", "--buffer-size", "32768"]
       environment:
           - SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           - SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -19,7 +19,7 @@ services:
           - STANDUP_CHANNEL_ID=XXXXXXXXXX
           - FLASK_APP=app
           - ENVIRONMENT=PROD
-          - REDIS_HOST=host.docker.internal
+          - REDIS_HOST=localhost
           - REDIS_PORT=6379
       volumes:
           - ~/slack.db/:/home/slack-standup/standup.db
