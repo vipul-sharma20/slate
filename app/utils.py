@@ -2,10 +2,13 @@ import os
 import json
 import math
 from datetime import datetime
+from functools import wraps
 
 import requests
 from slack import WebClient
+from flask import request, jsonify
 
+from app import redis_client
 from app.models import User, Submission
 from app.constants import (
     STANDUP_CHANNEL_ID,
@@ -17,6 +20,25 @@ from app.constants import (
 )
 
 client = WebClient(token=os.environ["SLACK_API_TOKEN"])
+
+
+def authenticate(func):
+    @wraps(func)
+    def check_authorization(*args, **kwargs):
+        if os.environ.get("DEBUG"):
+            func()
+        auth_key = request.headers.get("Authorization", "")
+        if redis_client.get(auth_key):
+            return func()
+        else:
+            return jsonify(
+                {
+                    "sucess": False,
+                    "reason": 'Invalid token. Send token as "Authorization" header',
+                }
+            )
+
+    return check_authorization
 
 
 # Format standups in the Slack's block syntax

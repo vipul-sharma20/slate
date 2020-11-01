@@ -36,8 +36,19 @@ class Standup(db.Model):
     standup_blocks = Column(String(), unique=False)
     trigger = Column(String(10), unique=False)
     is_active = Column(Boolean, unique=False, default=True)
+    created_at = Column(db.DateTime, default=datetime.utcnow, nullable=True)
 
     def update(self, **kwargs):
         for key, value in kwargs.items():
             if hasattr(self, key):
                 setattr(self, key, value)
+
+
+class Auth(db.Model):
+    __tablename__ = "auth"
+    id = Column(Integer, primary_key=True)
+    user = Column(String(50), unique=False, nullable=True)
+    token = Column(String(32), unique=False, nullable=True)
+    is_active = Column(Boolean, unique=False, default=True, nullable=True)
+    created_at = Column(db.DateTime, default=datetime.utcnow, nullable=True)
+

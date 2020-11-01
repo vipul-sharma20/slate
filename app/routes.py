@@ -18,6 +18,7 @@ from app.constants import (
     NO_USER_SUBMIT_MESSAGE,
 )
 from app.models import Submission, Standup, User, db
+from app.utils import authenticate
 import app.utils as utils
 
 
@@ -110,18 +111,20 @@ def publish_standup():
 
 # Add user to DB
 @app.route("/api/add_user/", methods=["POST"])
+@authenticate
 def add_user():
     payload = request.json
     if payload:
         user = User(**payload)
         db.session.add(user)
         db.session.commit()
-        return jsonify({"sucess": True})
+        return jsonify({"sucess": True, "id": user.id})
     return jsonify({"sucess": False})
 
 
 # Get user by username
 @app.route("/api/get_user/<username>/", methods=["GET"])
+@authenticate
 def get_user(username):
     user = User.query.filter_by(username=username).first()
     return jsonify({"success": True, "user": utils.prepare_user_response(user)})
@@ -129,6 +132,7 @@ def get_user(username):
 
 # Get all users
 @app.route("/api/get_users/", methods=["GET"])
+@authenticate
 def get_users():
     users = User.query.all()
     users_response = [utils.prepare_user_response(user) for user in users]
@@ -137,6 +141,7 @@ def get_users():
 
 # Add a new standup to DB
 @app.route("/api/add_standup/", methods=["POST"])
+@authenticate
 def add_standup():
     payload = request.json
     if utils.is_standup_valid(**payload):
@@ -168,6 +173,7 @@ def add_standup():
 
 # Update an existing standup
 @app.route("/api/update_standup/<standup_id>/", methods=["PUT"])
+@authenticate
 def update_standup(standup_id):
     payload = request.json
     if utils.is_standup_valid(**payload):
@@ -196,6 +202,7 @@ def update_standup(standup_id):
 
 
 @app.route("/api/get_standup/<standup_id>/", methods=["GET"])
+@authenticate
 def get_standup(standup_id):
     # remove all keys from dict starting with "_"
     filter_keys = lambda x: {k: v for k, v in x.items() if not k.startswith("_")}
@@ -222,6 +229,7 @@ def get_standup(standup_id):
 
 # Fetch standups based on their status (active, inactive, all)
 @app.route("/api/get_standups/", methods=["GET"])
+@authenticate
 def get_standups():
     status = request.args.get("status", ALL)
 
@@ -246,6 +254,7 @@ def get_standups():
 
 # Delete a standup
 @app.route("/api/delete_standup/<standup_id>/", methods=["DELETE"])
+@authenticate
 def delete_standup(standup_id):
     Standup.query.filter_by(id=standup_id).delete()
     db.session.commit()
@@ -254,6 +263,7 @@ def delete_standup(standup_id):
 
 # Delete all previous submissions
 @app.route("/api/delete_submissions/", methods=["DELETE"])
+@authenticate
 def delete_submissions():
     todays_datetime = datetime(
         datetime.today().year, datetime.today().month, datetime.today().day
@@ -263,6 +273,7 @@ def delete_submissions():
 
 # Notify users who have not submitted the standup yet
 @app.route("/api/notify_users/", methods=["GET"])
+@authenticate
 def notify_users():
     users = User.query.filter_by(is_active=True).all()
     blocks = NOTIFICATION_BLOCKS[:]
@@ -289,6 +300,7 @@ def notify_users():
 
 # Get submission for user id
 @app.route("/api/get_submission/<user_id>/", methods=["GET"])
+@authenticate
 def get_submission(user_id):
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
@@ -351,6 +363,7 @@ def get_submission(user_id):
 
 # Get submissions
 @app.route("/api/get_submissions/", methods=["GET"])
+@authenticate
 def get_submissions():
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
@@ -402,6 +415,7 @@ def get_submissions():
 
 # Health check for the server
 @app.route("/api/health/", methods=["GET"])
+@authenticate
 def health_check():
     return make_response("Alive!", 200)
 
