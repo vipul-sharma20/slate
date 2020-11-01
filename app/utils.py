@@ -25,18 +25,19 @@ client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 def authenticate(func):
     @wraps(func)
     def check_authorization(*args, **kwargs):
-        if os.environ.get("DEBUG"):
-            func(*args, **kwargs)
-        auth_key = request.headers.get("Authorization", "")
-        if redis_client.get(auth_key):
+        if os.environ.get("ENVIRONMENT", "DEBUG") == "DEBUG":
             return func(*args, **kwargs)
         else:
-            return jsonify(
-                {
-                    "sucess": False,
-                    "reason": 'Invalid token. Send token as "Authorization" header',
-                }
-            )
+            auth_key = request.headers.get("Authorization", "")
+            if redis_client.get(auth_key):
+                return func(*args, **kwargs)
+            else:
+                return jsonify(
+                    {
+                        "sucess": False,
+                        "reason": 'Invalid token. Send token as "Authorization" header',
+                    }
+                ), 401
 
     return check_authorization
 
