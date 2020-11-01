@@ -239,6 +239,7 @@ def prepare_user_response(user):
         "username": user.username,
         "is_active": user.is_active,
         "standup_id": user.standup_id,
+        "user_id": user.user_id,
     }
 
 
