@@ -21,6 +21,9 @@ services:
           - ENVIRONMENT=DEBUG
           - REDIS_HOST=localhost
           - REDIS_PORT=6379
+          - STANDUP_PUBLISH_TIME=07:30
+          - CAT_MODE=1
+          - POST_PUBLISH_STATS=1
       volumes:
           - ~/slack.db/:/home/slack-standup/standup.db
 
