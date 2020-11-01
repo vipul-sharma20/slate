@@ -1,0 +1,19 @@
+version: '3'
+services:
+
+  redis-master:
+    image: "redis"
+    ports:
+     - "6379:6379"
+    container_name: redis-master
+
+  slack-standup:
+      build: .
+      command: ["uwsgi", "--http-socket", ":5000", "--module", "\"app:create_app()\"", "--workers", "4", "--buffer-size", "32768"]
+      environment:
+          - SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+          - SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+          - SQLALCHEMY_DATABASE_URI="sqlite:////Users/vipul/submission.db"
+          - STANDUP_CHANNEL_ID="C0XXXXXXXXX"
+          - FLASK_APP=app
+
