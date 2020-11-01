@@ -122,12 +122,28 @@ def add_user():
     return jsonify({"sucess": False})
 
 
+# Update user
+@app.route("/api/update_user/<user_id>/", methods=["PUT"])
+@authenticate
+def update_user(user_id):
+    payload = request.json
+    if payload:
+        User.query.get(user_id).update(**payload)
+        db.session.commit()
+
+        return jsonify({"sucess": True})
+    return jsonify({"sucess": False})
+
+
 # Get user by username
 @app.route("/api/get_user/<username>/", methods=["GET"])
 @authenticate
 def get_user(username):
-    user = User.query.filter_by(username=username).first()
-    return jsonify({"success": True, "user": utils.prepare_user_response(user)})
+    try:
+        user = User.query.filter_by(username=username).first()
+        return jsonify({"success": True, "user": utils.prepare_user_response(user)})
+    except:
+        return jsonify({"success": False, "reason": "Username does not exist"})
 
 
 # Get all users
