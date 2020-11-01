@@ -240,17 +240,15 @@ def get_standups():
     ]
 
     return jsonify(
-        {"success": True, "standups": utils.format_standups(filtered_standups),}
+        {"success": True, "standups": filtered_standups}
     )
 
 
 # Delete a standup
-@app.route("/api/delete_standup/", methods=["DELETE"])
-def delete_standup():
-    payload = request.json
-    if payload:
-        Standup.query.filter_by(id=payload.get("id")).delete()
-        db.session.commit()
+@app.route("/api/delete_standup/<standup_id>/", methods=["DELETE"])
+def delete_standup(standup_id):
+    Standup.query.filter_by(id=standup_id).delete()
+    db.session.commit()
     return jsonify({"success": True})
 
 
