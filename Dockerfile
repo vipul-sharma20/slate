@@ -9,9 +9,15 @@ COPY . /home/slack-standup/
 
 ENV SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ENV SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-ENV SQLALCHEMY_DATABASE_URI="sqlite:////Users/vipul/submission.db"
+ENV SQLALCHEMY_DATABASE_URI="sqlite:////home/slack-standup/standup.db"
 ENV STANDUP_CHANNEL_ID="C0XXXXXXXXX"
 ENV FLASK_APP=app
+ENV REDIS_HOST=host.docker.internal
+ENV ENVIRONMENT=PROD
+
+RUN flask db stamp head
+RUN flask db migrate
+RUN flask db upgrade
 
 CMD ["uwsgi", "--http-socket", ":5000", "--module", "\"app:create_app()\"", "--workers", "4", "--buffer-size", "32768"]
 
