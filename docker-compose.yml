@@ -11,7 +11,7 @@ services:
       build: .
       ports:
           - "5000:5000"
-      command: ["uwsgi", "--http-socket", ":5000", "--module", "app:create_app()", "--workers", "4", "--buffer-size", "32768"]
+      command: ["uwsgi", "--http-socket", ":5000", "--enable-treads", "--threads", "4", "--module", "\"app:create_app()\"", "--workers", "2", "--buffer-size", "32768"]
       environment:
           - SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           - SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
