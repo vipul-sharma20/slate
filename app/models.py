@@ -20,6 +20,11 @@ class User(db.Model):
     standup_id = Column(Integer, ForeignKey("standup.id"))
     created_at = Column(db.DateTime, default=datetime.utcnow, nullable=True)
 
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+
 
 class Submission(db.Model):
     __tablename__ = "submission"
