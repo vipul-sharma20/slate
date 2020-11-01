@@ -20,6 +20,7 @@ services:
           - FLASK_APP=app
           - ENVIRONMENT=PROD
           - REDIS_HOST=host.docker.internal
+          - REDIS_PORT=6379
       volumes:
           - ~/slack.db/:/home/slack-standup/standup.db
 

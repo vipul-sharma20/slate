@@ -13,6 +13,7 @@ ENV SQLALCHEMY_DATABASE_URI="sqlite:////home/slack-standup/standup.db"
 ENV STANDUP_CHANNEL_ID="C0XXXXXXXXX"
 ENV FLASK_APP=app
 ENV REDIS_HOST=host.docker.internal
+ENV REDIS_PORT=6379
 ENV ENVIRONMENT=PROD
 
 RUN flask db stamp head
