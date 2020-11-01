@@ -167,8 +167,8 @@ def add_standup():
 
 
 # Update an existing standup
-@app.route("/api/update_standup/", methods=["PUT"])
-def update_standup():
+@app.route("/api/update_standup/<standup_id>/", methods=["PUT"])
+def update_standup(standup_id):
     payload = request.json
     if utils.is_standup_valid(**payload):
         try:
@@ -177,8 +177,9 @@ def update_standup():
             )
             data = utils.prepare_standup_table_data(**payload)
 
-            Standup.query.get(payload.get("id")).update(**data)
+            Standup.query.get(standup_id).update(**data)
             db.session.commit()
+            return jsonify({"success": True})
         except:
             return jsonify(
                 {
