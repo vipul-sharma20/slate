@@ -18,7 +18,7 @@ services:
           - SQLALCHEMY_DATABASE_URI=sqlite:////home/slack-standup/standup.db
           - STANDUP_CHANNEL_ID=XXXXXXXXXX
           - FLASK_APP=app
-          - ENVIRONMENT=PROD
+          - ENVIRONMENT=DEBUG
           - REDIS_HOST=localhost
           - REDIS_PORT=6379
       volumes:
