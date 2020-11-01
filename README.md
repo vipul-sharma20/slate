@@ -54,7 +54,7 @@ export SQLALCHEMY_DATABASE_URI="sqlite:////path/to/standup.db"
 export STANDUP_CHANNEL_ID="C0XXXXXXXXX"  # Channel where submissions will be posted
 ```
 
-### Docker
+## Docker
 
 `docker-compose up`
 
@@ -70,18 +70,18 @@ Alternatively you can also configure user DM notifications which will allow
 them to open form from the notification message. Check API below in
 "Notifications and Reporting" section
 
+## API
+
+There are APIs to fetch, create, update and delete users, standup forms, user
+submissions over a date range etc.. These can be used to integrate with a UI
+application.
+
+API usage, examples and doc at: [https://documenter.getpostman.com/view/803934/TVYKbwpd][3]
+
 ## DB
 
 This application uses SQLite DB which can be replaced with any other DB by the
 users of this repo. I am using SQLAlchemy as the ORM.
-
-## API
-
-There are APIs to fetch, create, update and delete standup forms, submissions
-and users. These can be used to integrate with a UI application.
-
-API usage, examples and doc at: [https://documenter.getpostman.com/view/803934/TVYKbwpd][3]
-
 
 ## Notifications and Reporting
 
