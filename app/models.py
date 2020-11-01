@@ -18,6 +18,7 @@ class User(db.Model):
     )
     standup = relationship("Standup")
     standup_id = Column(Integer, ForeignKey("standup.id"))
+    created_at = Column(db.DateTime, default=datetime.utcnow, nullable=True)
 
 
 class Submission(db.Model):
