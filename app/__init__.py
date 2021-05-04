@@ -1,14 +1,16 @@
 import os
 
-import redis
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
+from app.cache import Cache
+
 db = SQLAlchemy()
 migrate = Migrate()
 
-redis_client = redis.Redis(host=os.environ.get("REDIS_HOST", "localhost"), port=os.environ.get("REDIS_PORT", 6379), db=0)
+# redis_client = redis.Redis(host=os.environ.get("REDIS_HOST", "localhost"), port=os.environ.get("REDIS_PORT", 6379), db=0)
+app_cache = cache.Cache()
 
 
 def create_app():
@@ -22,18 +24,17 @@ def create_app():
     with app.app_context():
         from . import routes
         db.create_all()
-        init_redis()
-        print("started")
+        init_cache()
 
         return app
 
 
-def init_redis():
+def init_cache():
     from app.models import Auth
 
     keys = Auth.query.all()
 
     for key in keys:
         if key.token and key.user:
-            redis_client.set(key.token, key.user)
+            app_cache.set(key.token, key.user)
 

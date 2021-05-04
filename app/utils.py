@@ -8,7 +8,7 @@ import requests
 from slack import WebClient
 from flask import request, jsonify
 
-from app import redis_client
+from app import app_cache
 from app.models import User, Submission
 from app.constants import (
     STANDUP_CHANNEL_ID,
@@ -29,7 +29,7 @@ def authenticate(func):
             return func(*args, **kwargs)
         else:
             auth_key = request.headers.get("Authorization", "")
-            if redis_client.get(auth_key):
+            if app_cache.get(auth_key):
                 return func(*args, **kwargs)
             else:
                 return jsonify(
