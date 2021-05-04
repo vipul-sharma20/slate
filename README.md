@@ -58,6 +58,8 @@ export STANDUP_CHANNEL_ID="C0XXXXXXXXX"  # Channel where submissions will be pos
 
 `docker-compose up`
 
+Note: update the environment variables in the `docker-compose.yml` file
+
 ## Usage
 
 Use the slash command to trigger with the standup you want to fill
