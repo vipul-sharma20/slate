@@ -61,9 +61,9 @@ def build_standup(submissions, is_single=False) -> list:
         blocks = standup_json.get("blocks", [])
         values = standup_json.get("state", {}).get("values", {})
 
-        standup_content_section = {"type": "section", "fields": []}
-
         for block in blocks:
+            standup_content_section = {"type": "section", "text": {}}
+
             block_id = block.get("block_id", "")
             action_id = block.get("element", {}).get("action_id", "")
 
@@ -71,9 +71,9 @@ def build_standup(submissions, is_single=False) -> list:
             content = values.get(block_id, {}).get(action_id, {}).get("value", "")
 
             standup_field = {"type": "mrkdwn", "text": f"\n*{title}*\n{content}\n"}
-            standup_content_section["fields"].append(standup_field)
+            standup_content_section["text"] = standup_field
 
-        formatted_standup.append(standup_content_section)
+            formatted_standup.append(standup_content_section)
         formatted_standup.append(STANDUP_SECTION_DIVIDER)
     return formatted_standup
 
