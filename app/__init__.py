@@ -19,7 +19,7 @@ def create_app():
     app.config.from_object('config.Config')
 
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(app, db, render_as_batch=True)
 
     with app.app_context():
         from . import routes
