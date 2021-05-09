@@ -8,16 +8,16 @@ from slack import WebClient
 from slack.errors import SlackApiError
 
 from app.constants import (
-    STANDUP_CHANNEL_ID,
     ALL,
     ACTIVE,
     INACTIVE,
-    NOTIFICATION_BLOCKS,
     NO_USER_ERROR_MESSAGE,
     POST_PUBLISH_STATS,
     NO_USER_SUBMIT_MESSAGE,
+    BUTTON_TRIGGER,
+    SLASH_COMMAND_TRIGGER,
 )
-from app.models import Submission, Standup, User, db
+from app.models import Submission, Standup, User, Team, db
 from app.utils import authenticate
 import app.utils as utils
 
@@ -31,13 +31,31 @@ def standup_trigger():
     if request.method == "GET":
         data = json.loads(request.args["messages"])
         user_id = data.get("user", {}).get("id")
+        action_type = BUTTON_TRIGGER
     else:
         data = request.form
         user_id = data.get("user_id")
+        action_type = SLASH_COMMAND_TRIGGER
 
     try:
         user = User.query.filter_by(user_id=user_id).first()
-        standup = Standup.query.filter_by(id=user.standup_id).first()
+        if action_type == BUTTON_TRIGGER:
+            team = (
+                db.session.query(Team)
+                .join(User.team)
+                .filter(User.id == user.id)
+                .first()
+            )
+        else:
+            team_name = data.get("text")
+            if not team_name:
+                return make_response(
+                    f"Slash command format is `/standup <team-name>`.\nYour commands: {', '.join(utils.get_user_slash_commands(user))}",
+                    200,
+                )
+            team = Team.query.filter_by(name=team_name).first()
+
+        standup = team.standup
 
         client.views_open(
             trigger_id=data.get("trigger_id"), view=standup.standup_blocks
@@ -47,8 +65,7 @@ def standup_trigger():
         code = e.response["error"]
         return make_response(f"Failed to open a modal due to {code}", 200)
     except AttributeError:
-        utils.send_direct_message(user_id, NO_USER_ERROR_MESSAGE)
-        return make_response("No user details or standup exists for this request", 200)
+        return make_response(f"No user details or standup exists for this request.\n{NO_USER_ERROR_MESSAGE}", 200)
 
     return make_response("invalid request", 403)
 
@@ -81,27 +98,39 @@ def standup_modal():
 
 
 # Request to publish standup to a Slack channel
-@app.route("/slack/publish_standup/", methods=["GET"])
-def publish_standup():
+@app.route("/slack/publish_standup/<team_name>/", methods=["GET"])
+def publish_standup(team_name):
 
     try:
         todays_datetime = datetime(
             datetime.today().year, datetime.today().month, datetime.today().day
         )
 
+        team = Team.query.filter_by(name=team_name).first()
+        if not team:
+            return make_response(f'Team "{team_name}" does not exist', 404)
+
+        # Get all active users for this team
+        users = (
+            db.session.query(User)
+            .join(Team.user)
+            .filter(Team.id == team.id, User.is_active)
+        )
         submissions = Submission.query.filter(
-            Submission.created_at >= todays_datetime
-        ).all()
+            Submission.created_at >= todays_datetime,
+            User.id.in_([user.id for user in users]),
+        )
+
         client.chat_postMessage(
-            channel=STANDUP_CHANNEL_ID,
+            channel=team.standup.publish_channel,
             text="Standup complete",
             blocks=utils.build_standup(submissions),
         )
         if POST_PUBLISH_STATS:
-            no_submit_users = utils.post_publish_stat()
+            no_submit_users = utils.post_publish_stat(users)
             message = f"{NO_USER_SUBMIT_MESSAGE} {', '.join(no_submit_users)}"
 
-            client.chat_postMessage(channel=STANDUP_CHANNEL_ID, text=message)
+            client.chat_postMessage(channel=team.standup.publish_channel, text=message)
 
         return make_response(json.dumps(utils.build_standup(submissions)), 200)
     except SlackApiError as e:
@@ -288,28 +317,31 @@ def delete_submissions():
 
 
 # Notify users who have not submitted the standup yet
-@app.route("/api/notify_users/", methods=["GET"])
+@app.route("/api/notify_users/<team_name>/", methods=["GET"])
 @authenticate
-def notify_users():
-    users = User.query.filter_by(is_active=True).all()
-    blocks = NOTIFICATION_BLOCKS[:]
-    text = f"The standup will be reported in {utils.time_left()}"
+def notify_users(team_name):
+    team = Team.query.filter_by(name=team_name).first()
 
-    eta_section = {
-        "type": "section",
-        "text": {"type": "mrkdwn", "text": text,},
-    }
-    blocks.insert(1, eta_section)
+    # Get all active users for this team
+    users = (
+        db.session.query(User)
+        .join(Team.user)
+        .filter(Team.id == team.id, User.is_active)
+    ).all()
 
     for user in users:
+        num_teams = len(user.team)
+
         todays_datetime = datetime(
             datetime.today().year, datetime.today().month, datetime.today().day
         )
 
-        submission = user.submission.filter(
+        submissions = user.submission.filter(
             Submission.created_at >= todays_datetime
-        ).first()
-        if submission is None:
+        ).all()
+
+        if len(submissions) < num_teams:
+            text, blocks = utils.prepare_notification_message(user)
             client.chat_postMessage(channel=user.user_id, text=text, blocks=blocks)
     return jsonify({"success": True})
 

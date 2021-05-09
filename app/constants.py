@@ -3,10 +3,14 @@ import os
 ALL = "all"
 ACTIVE = "active"
 INACTIVE = "inactive"
+BUTTON_TRIGGER = "button_trigger"
+SLASH_COMMAND_TRIGGER = "slash_command_trigger"
 
 CAT_API_HOST = "https://api.thecatapi.com"
 
-NO_USER_ERROR_MESSAGE = "Your user details or standup for your user doesn't exist in the database."
+NO_USER_ERROR_MESSAGE = (
+    "Your user details or standup for your user/team doesn't exist in the database."
+)
 
 STANDUP_CHANNEL_ID = os.environ.get("STANDUP_CHANNEL_ID")
 POST_PUBLISH_STATS = os.environ.get("POST_PUBLISH_STATS", 0)
@@ -47,12 +51,15 @@ NOTIFICATION_BLOCKS = [
 
 SUBMIT_TEMPLATE_SECTION_1 = {
     "type": "section",
-    "text": {"type": "mrkdwn", "text": "Thanks for submitting today's standup :slightly_smiling_face:"}
+    "text": {
+        "type": "mrkdwn",
+        "text": "Thanks for submitting today's standup :slightly_smiling_face:",
+    },
 }
 
 
 SUBMIT_TEMPLATE_SECTION_2 = {
     "type": "section",
-    "text": {"type": "mrkdwn", "text": "Here's a cat for you"}
+    "text": {"type": "mrkdwn", "text": "Here's a cat for you"},
 }
 

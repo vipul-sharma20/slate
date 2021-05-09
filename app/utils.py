@@ -17,6 +17,7 @@ from app.constants import (
     SUBMIT_TEMPLATE_SECTION_1,
     SUBMIT_TEMPLATE_SECTION_2,
     CAT_API_HOST,
+    NOTIFICATION_BLOCKS,
 )
 
 client = WebClient(token=os.environ["SLACK_API_TOKEN"])
@@ -139,10 +140,9 @@ def is_submission_eligible(payload: dict) -> bool:
 
 
 # Post standup user stats after publish
-def post_publish_stat() -> list:
+def post_publish_stat(users) -> list:
     no_submit_users: list = []
-
-    users = User.query.filter_by(is_active=True).all()
+    users = users.all()
 
     for user in users:
         todays_datetime = datetime(
@@ -273,6 +273,38 @@ def prepare_user_submission(submission) -> dict:
         )
 
     return submission_response
+
+
+# List of slash commands available to a user
+def get_user_slash_commands(user):
+    return [f"`/standup {team.name}`" for team in user.team]
+
+
+# Notification message builder
+def prepare_notification_message(user):
+    num_teams = len(user.team)
+    text = f"The standup will be reported in {time_left()}."
+
+    if num_teams >= 2:
+        triggers = get_user_slash_commands(user)
+        text += "\nPlease submit your standups using: " + " ".join(triggers)
+        return text, []
+    else:
+        blocks = NOTIFICATION_BLOCKS[:]
+        team_name = user.team[0].name
+
+        text += f"\nYou can click on the button below or use command: `/standup {team_name}`"
+
+        eta_section = {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": text,
+            },
+        }
+
+        blocks.insert(1, eta_section)
+        return text, blocks
 
 
 # validate /api/add_standup/ API payload
