@@ -55,6 +55,8 @@ def standup_trigger():
                 )
             team = Team.query.filter_by(name=team_name).first()
 
+        # TODO: Check if this user it allowed in this team's standup especially
+        # in the case of slash command trigger.
         standup = team.standup
 
         client.views_open(
@@ -65,7 +67,10 @@ def standup_trigger():
         code = e.response["error"]
         return make_response(f"Failed to open a modal due to {code}", 200)
     except AttributeError:
-        return make_response(f"No user details or standup exists for this request.\n{NO_USER_ERROR_MESSAGE}", 200)
+        return make_response(
+            f"No user details or standup exists for this request.\n{NO_USER_ERROR_MESSAGE}",
+            200,
+        )
 
     return make_response("invalid request", 403)
 
@@ -146,7 +151,15 @@ def publish_standup(team_name):
 def add_user():
     payload = request.json
     if payload:
-        user = User(**payload)
+        team_id = payload.get("team_id")
+        team = Team.query.filter(Team.id == team_id).first()
+
+        user = User()
+        user.user_id = payload.get("user_id")
+        user.username = payload.get("username")
+        user.is_active = payload.get("is_active")
+        user.team.append(team)
+
         db.session.add(user)
         db.session.commit()
         return jsonify({"sucess": True, "id": user.id})
@@ -159,7 +172,16 @@ def add_user():
 def update_user(user_id):
     payload = request.json
     if payload:
-        User.query.get(user_id).update(**payload)
+        user = User.query.get(user_id)
+        team_id = payload.get("team_id")
+        team = Team.query.filter(Team.id == team_id).first()
+
+        user.user_id = payload.get("user_id")
+        user.username = payload.get("username")
+        user.is_active = payload.get("is_active")
+        user.team.append(team)
+
+        db.session.add(user)
         db.session.commit()
 
         return jsonify({"sucess": True})
@@ -199,6 +221,10 @@ def add_standup():
 
         try:
             standup = Standup(**data)
+            team_id = payload.get("team_id")
+            team = Team.query.filter(Team.id == team_id).first()
+            standup.team = team
+
             db.session.add(standup)
             db.session.commit()
 
@@ -340,6 +366,10 @@ def notify_users(team_name):
             Submission.created_at >= todays_datetime
         ).all()
 
+        # TODO: This assumes submissions for all teams. It should check
+        # submission for only this team (requested in the API request)
+        # This will need to submission object to have reference to
+        # the standup it's associated with.
         if len(submissions) < num_teams:
             text, blocks = utils.prepare_notification_message(user)
             client.chat_postMessage(channel=user.user_id, text=text, blocks=blocks)
@@ -462,6 +492,37 @@ def get_submissions():
             ],
         }
     )
+
+
+# Add a team to DB
+@app.route("/api/add_team/", methods=["POST"])
+@authenticate
+def add_team():
+    payload = request.json
+    if payload:
+        team = Team()
+        standup = Standup.query.filter(Standup.id == payload.get("standup_id")).first()
+        team.standup = standup
+        team.name = payload.get("name")
+        db.session.add(team)
+        db.session.commit
+    return jsonify({"success": True, "team_id": team.id})
+
+
+# Get all teams
+@app.route("/api/get_teams/", methods=["GET"])
+@authenticate
+def fetch_teams():
+    teams = Team.query.all()
+    response = []
+    for team in teams:
+        team_data = {
+            "name": team.name,
+            "standup": team.standup.id if team.standup else None,
+            "users": [user.username for user in team.user],
+        }
+        response.append(team_data)
+    return jsonify(response)
 
 
 # Health check for the server
