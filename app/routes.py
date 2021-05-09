@@ -66,7 +66,9 @@ def standup_modal():
 
     if payload and utils.is_submission_eligible(payload):
         user_payload = payload.get("user", {})
-        data = dict(standup_submission=json.dumps(payload.get("view")),)
+        data = dict(
+            standup_submission=json.dumps(payload.get("view")),
+        )
 
         user = User.query.filter_by(user_id=user_payload.get("id")).first()
         submission = Submission(user_id=user.id, **data)
@@ -263,9 +265,7 @@ def get_standups():
         utils.format_standup(filter_keys(standup.__dict__)) for standup in standups
     ]
 
-    return jsonify(
-        {"success": True, "standups": filtered_standups}
-    )
+    return jsonify({"success": True, "standups": filtered_standups})
 
 
 # Delete a standup
@@ -370,8 +370,7 @@ def get_submission(user_id):
         {
             "success": True,
             "submissions": [
-                utils.prepare_user_submission(submission)
-                for submission in submissions
+                utils.prepare_user_submission(submission) for submission in submissions
             ],
         }
     )
@@ -391,13 +390,17 @@ def get_submissions():
             end_date = datetime.strptime(end_date, "%Y-%m-%d")
     except ValueError:
         return jsonify(
-            {"success": False, "reason": "Invalid date format. Use format yyyy-mm-dd",}
+            {
+                "success": False,
+                "reason": "Invalid date format. Use format yyyy-mm-dd",
+            }
         )
 
     if start_date and end_date:
         submissions = (
             Submission.query.filter(
-                Submission.created_at >= start_date, Submission.created_at <= end_date,
+                Submission.created_at >= start_date,
+                Submission.created_at <= end_date,
             )
             .order_by(Submission.created_at.desc())
             .all()
@@ -434,4 +437,3 @@ def get_submissions():
 @authenticate
 def health_check():
     return make_response("Alive!", 200)
-

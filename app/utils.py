@@ -32,12 +32,15 @@ def authenticate(func):
             if app_cache.get(auth_key):
                 return func(*args, **kwargs)
             else:
-                return jsonify(
-                    {
-                        "sucess": False,
-                        "reason": 'Invalid token. Send token as "Authorization" header',
-                    }
-                ), 401
+                return (
+                    jsonify(
+                        {
+                            "sucess": False,
+                            "reason": 'Invalid token. Send token as "Authorization" header',
+                        }
+                    ),
+                    401,
+                )
 
     return check_authorization
 
