@@ -505,7 +505,7 @@ def add_team():
         team.standup = standup
         team.name = payload.get("name")
         db.session.add(team)
-        db.session.commit
+        db.session.commit()
     return jsonify({"success": True, "team_id": team.id})
 
 
