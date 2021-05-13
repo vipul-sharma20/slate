@@ -121,10 +121,15 @@ def publish_standup(team_name):
             .join(Team.user)
             .filter(Team.id == team.id, User.is_active)
         )
-        submissions = Submission.query.filter(
+        submissions_filter = Submission.query.filter(
             Submission.created_at >= todays_datetime,
-            User.id.in_([user.id for user in users]),
         )
+
+        submissions = []
+        for submission in submissions_filter:
+            if submission.user_id not in [user.id for user in users]:
+                continue
+            submissions.append(submission)
 
         client.chat_postMessage(
             channel=team.standup.publish_channel,
