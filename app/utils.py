@@ -93,7 +93,8 @@ def after_submission(submission, payload) -> None:
 
     if now > publish_time:
         client.chat_postMessage(
-            channel=STANDUP_CHANNEL_ID, blocks=build_standup([submission], True)
+            channel=submission.user.team[0].standup.publish_channel,
+            blocks=build_standup([submission], True),
         )
 
     client.chat_postMessage(
