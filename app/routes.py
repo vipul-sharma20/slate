@@ -105,6 +105,7 @@ def standup_modal():
 
 # Request to publish standup to a Slack channel
 @app.route("/slack/publish_standup/<team_name>/", methods=["GET"])
+@authenticate
 def publish_standup(team_name):
 
     try:
