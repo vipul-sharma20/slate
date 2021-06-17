@@ -399,6 +399,7 @@ def get_submission(user_id):
         if end_date:
             end_date = datetime.strptime(end_date, "%Y-%m-%d")
     except ValueError:
+        jsonify(
             {
                 "success": False,
                 "reason": "Invalid date format. Use format yyyy-mm-dd",
@@ -538,3 +539,5 @@ def fetch_teams():
 @app.route("/api/health/", methods=["GET"])
 @authenticate
 def health_check():
+    return make_response("Alive!", 200)
+
