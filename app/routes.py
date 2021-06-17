@@ -135,11 +135,11 @@ def publish_standup(team_name):
 
         blocks_chunk = utils.chunk_blocks(utils.build_standup(submissions),
                                           BLOCK_SIZE)
-        for block in blocks_chunk:
+        for blocks in blocks_chunk:
             client.chat_postMessage(
                 channel=team.standup.publish_channel,
                 text="Standup complete",
-                blocks=blocks_chunk,
+                blocks=blocks,
             )
         if POST_PUBLISH_STATS:
             no_submit_users = utils.post_publish_stat(users)
