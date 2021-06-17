@@ -16,6 +16,7 @@ from app.constants import (
     NO_USER_SUBMIT_MESSAGE,
     BUTTON_TRIGGER,
     SLASH_COMMAND_TRIGGER,
+    BLOCK_SIZE,
 )
 from app.models import Submission, Standup, User, Team, db
 from app.utils import authenticate
@@ -131,11 +132,14 @@ def publish_standup(team_name):
                 continue
             submissions.append(submission)
 
-        client.chat_postMessage(
-            channel=team.standup.publish_channel,
-            text="Standup complete",
-            blocks=utils.build_standup(submissions),
-        )
+        blocks_chunk = utils.chunk_blocks(utils.build_standup(submissions),
+                                          BLOCK_SIZE)
+        for block in blocks:
+            client.chat_postMessage(
+                channel=team.standup.publish_channel,
+                text="Standup complete",
+                blocks=blocks_chunk,
+            )
         if POST_PUBLISH_STATS:
             no_submit_users = utils.post_publish_stat(users)
             message = f"{NO_USER_SUBMIT_MESSAGE} {', '.join(no_submit_users)}"
@@ -394,7 +398,6 @@ def get_submission(user_id):
         if end_date:
             end_date = datetime.strptime(end_date, "%Y-%m-%d")
     except ValueError:
-        return jsonify(
             {
                 "success": False,
                 "reason": "Invalid date format. Use format yyyy-mm-dd",
@@ -534,4 +537,3 @@ def fetch_teams():
 @app.route("/api/health/", methods=["GET"])
 @authenticate
 def health_check():
-    return make_response("Alive!", 200)

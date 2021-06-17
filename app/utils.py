@@ -7,6 +7,7 @@ from functools import wraps
 import requests
 from slack import WebClient
 from flask import request, jsonify
+from sqlalchemy.ext.declarative import DeclarativeMeta
 
 from app import app_cache
 from app.models import User, Submission
@@ -80,6 +81,13 @@ def build_standup(submissions, is_single=False) -> list:
             formatted_standup.append(standup_content_section)
         formatted_standup.append(STANDUP_SECTION_DIVIDER)
     return formatted_standup
+
+
+# Slack can't post more than 50 blocks. This function will chunk the
+# blocks into blocks of 50 or chunk_size
+def chunk_blocks(blocks: list, chunk_size: int) -> list:
+    for i in range(0, len(blocks), chunk_size):
+        yield blocks[i:i + chunk_size]
 
 
 # Handle after standup submission process

@@ -8,6 +8,8 @@ SLASH_COMMAND_TRIGGER = "slash_command_trigger"
 
 CAT_API_HOST = "https://api.thecatapi.com"
 
+BLOCK_SIZE = 50
+
 NO_USER_ERROR_MESSAGE = (
     "Your user details or standup for your user/team doesn't exist in the database."
 )
