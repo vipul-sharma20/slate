@@ -399,7 +399,7 @@ def get_submission(user_id):
         if end_date:
             end_date = datetime.strptime(end_date, "%Y-%m-%d")
     except ValueError:
-        jsonify(
+        return jsonify(
             {
                 "success": False,
                 "reason": "Invalid date format. Use format yyyy-mm-dd",
