@@ -78,7 +78,7 @@ There are APIs to fetch, create, update and delete users, standup forms, user
 submissions over a date range etc.. These can be used to integrate with a UI
 application.
 
-API usage, examples and doc at: [https://documenter.getpostman.com/view/803934/TVYKbwpd][3]
+API usage, examples and doc at: [https://www.getpostman.com/collections/4e76e0951616b3df4e5f][3]
 
 ## DB
 
@@ -101,7 +101,7 @@ MIT
 [0]: https://i.imgur.com/LYXXTax.png
 [1]: https://i.imgur.com/XemSNPf.png
 [2]: https://i.imgur.com/Ns4YLd2.png
-[3]: https://documenter.getpostman.com/view/803934/TVYKbwpd
+[3]: https://www.getpostman.com/collections/4e76e0951616b3df4e5f
 [4]: https://api.slack.com/surfaces#modals
 [5]: https://bit.ly/340PukR
 [6]: https://i.imgur.com/l94Tg4U.png
