@@ -3,6 +3,7 @@ import json
 import math
 from datetime import datetime
 from functools import wraps
+from typing import List, Dict
 
 import requests
 from slack import WebClient
@@ -110,7 +111,7 @@ def after_submission(submission, payload) -> None:
 
 
 # Random friendly message
-def after_submission_message(post_submit_action: PostSubmitActionEnum) -> list:
+def after_submission_message(post_submit_action: PostSubmitActionEnum) -> List[Dict]:
     blocks = [SUBMIT_TEMPLATE_SECTION_1]
 
     if post_submit_action.name == PostSubmitActionEnum.CAT:
