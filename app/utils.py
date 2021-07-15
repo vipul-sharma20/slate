@@ -7,12 +7,10 @@ from functools import wraps
 import requests
 from slack import WebClient
 from flask import request, jsonify
-from sqlalchemy.ext.declarative import DeclarativeMeta
 
 from app import app_cache
-from app.models import User, Submission, PostSubmitActionEnum
+from app.models import Submission, PostSubmitActionEnum
 from app.constants import (
-    STANDUP_CHANNEL_ID,
     STANDUP_INFO_SECTION,
     STANDUP_SECTION_DIVIDER,
     SUBMIT_TEMPLATE_SECTION_1,
