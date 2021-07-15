@@ -305,7 +305,9 @@ def get_user_slash_commands(user):
 # Notification message builder
 def prepare_notification_message(user):
     num_teams = len(user.team)
-    text = f"The standup will be reported in {time_left(user.team.standup.publish_time)}."
+
+    # TODO: Fix team specific notification
+    text = f"The standup will be reported in {time_left(user.team[0].standup.publish_time)}."
 
     if num_teams >= 2:
         triggers = get_user_slash_commands(user)
