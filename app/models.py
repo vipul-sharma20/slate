@@ -1,6 +1,7 @@
+import enum
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, Enum
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -15,6 +16,11 @@ association_table = Table(
 )
 
 
+class PostSubmitActionEnum(enum.Enum):
+    CAT = 1
+    DOG = 2
+
+
 class User(db.Model):
     __tablename__ = "user"
     __table_args__ = {'extend_existing': True}
@@ -26,6 +32,7 @@ class User(db.Model):
     submission = relationship("Submission", lazy='dynamic', back_populates="user")
     team = relationship("Team", secondary=association_table, back_populates="user")
     created_at = Column(db.DateTime, default=datetime.utcnow, nullable=True)
+    post_submit_action = Column(Enum(PostSubmitActionEnum), nullable=True)
 
     def update(self, **kwargs):
         for key, value in kwargs.items():

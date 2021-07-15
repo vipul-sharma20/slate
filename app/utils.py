@@ -10,7 +10,7 @@ from flask import request, jsonify
 from sqlalchemy.ext.declarative import DeclarativeMeta
 
 from app import app_cache
-from app.models import User, Submission
+from app.models import User, Submission, PostSubmitActionEnum
 from app.constants import (
     STANDUP_CHANNEL_ID,
     STANDUP_INFO_SECTION,
@@ -106,15 +106,16 @@ def after_submission(submission, payload) -> None:
         )
 
     client.chat_postMessage(
-        channel=submission.user.user_id, blocks=after_submission_message()
+        channel=submission.user.user_id,
+        blocks=after_submission_message(submission.user.post_submit_action)
     )
 
 
 # Random friendly message
-def after_submission_message() -> list:
+def after_submission_message(post_submit_action: PostSubmitActionEnum) -> list:
     blocks = [SUBMIT_TEMPLATE_SECTION_1]
 
-    if os.environ.get("CAT_MODE", 0):
+    if post_submit_action.name == PostSubmitActionEnum.CAT:
         response = requests.get(
             CAT_API_HOST + "/api/images/get?type=jpg&size=med&format=json", timeout=3
         )
@@ -132,6 +133,9 @@ def after_submission_message() -> list:
                     "alt_text": "image",
                 }
             )
+    elif post_submit_action.name == PostSubmitActionEnum.DOG:
+        pass
+
     return blocks
 
 
