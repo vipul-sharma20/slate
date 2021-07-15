@@ -170,12 +170,8 @@ def post_publish_stat(users) -> list:
 
 
 # Find how much time left to report
-def time_left() -> str:
+def time_left(publish_time) -> str:
     text: str = ""
-
-    publish_time = datetime.strptime(
-        os.environ.get("STANDUP_PUBLISH_TIME", "13:00"), "%H:%M"
-    ).time()
 
     publish_datetime = datetime(
         datetime.today().year,
@@ -294,7 +290,7 @@ def get_user_slash_commands(user):
 # Notification message builder
 def prepare_notification_message(user):
     num_teams = len(user.team)
-    text = f"The standup will be reported in {time_left()}."
+    text = f"The standup will be reported in {time_left(user.team.standup.publish_time)}."
 
     if num_teams >= 2:
         triggers = get_user_slash_commands(user)

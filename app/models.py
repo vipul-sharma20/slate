@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, Enum
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, Enum, Time
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -75,6 +75,7 @@ class Standup(db.Model):
     team_id = Column(Integer, ForeignKey("team.id"))
     team = relationship("Team", back_populates="standup")
     publish_channel = Column(String(20), unique=False)
+    publish_time = Column(Time, nullable=True)
     created_at = Column(db.DateTime, default=datetime.utcnow, nullable=True)
 
     def update(self, **kwargs):
