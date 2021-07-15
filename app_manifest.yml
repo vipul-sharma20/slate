@@ -1,0 +1,31 @@
+_metadata:
+  major_version: 1
+  minor_version: 1
+display_information:
+  name: standup
+  description: Daily standup app
+  background_color: "#0b2e4d"
+features:
+  bot_user:
+    display_name: standup
+    always_online: false
+  slash_commands:
+    - command: /standup
+      url: host:port/slack/standup-trigger/
+      description: Opens your standup form
+      usage_hint: /standup <team-name>
+      should_escape: false
+oauth_config:
+  scopes:
+    bot:
+      - channels:history
+      - chat:write
+      - commands
+      - users:read
+settings:
+  interactivity:
+    is_enabled: true
+    request_url: host:port/slack/submit_standup/
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+
