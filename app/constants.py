@@ -28,7 +28,16 @@ STANDUP_INFO_SECTION = {
 
 STANDUP_SECTION_DIVIDER = {"type": "divider"}
 
-STANDUP_USER_SECTION = {"type": "section", "text": {"type": "mrkdwn", "text": ""}}
+STANDUP_USER_SECTION = {"type": "section",
+                        "text": {"type": "mrkdwn", "text": ""}}
+
+STANDUP_HELP_SECTION = {
+    "type": "section",
+    "text": {
+        "type": "mrkdwn",
+        "text": "You can use markup to format your messages Documentation <https://slack.com/intl/en-gb/help/articles/202288908-Format-your-messages#use-markup|here>.\n\nProtip:\n `<url|text>`: <https://slack.com/intl/en-gb/help/articles/202288908-Format-your-messages#use-markup|Will render as this>"
+    }
+}
 
 
 NOTIFICATION_BLOCKS = [
