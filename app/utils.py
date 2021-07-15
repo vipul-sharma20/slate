@@ -14,6 +14,7 @@ from app.models import Submission, PostSubmitActionEnum
 from app.constants import (
     STANDUP_INFO_SECTION,
     STANDUP_SECTION_DIVIDER,
+    STANDUP_HELP_SECTION,
     SUBMIT_TEMPLATE_SECTION_1,
     SUBMIT_TEMPLATE_SECTION_2,
     CAT_API_HOST,
@@ -220,6 +221,7 @@ def questions_to_blockkit(questions: list) -> dict:
         "close": {"type": "plain_text", "text": "Cancel", "emoji": True},
         "blocks": [],
     }
+    blockkit_form.append(STANDUP_HELP_SECTION)
 
     for question in questions:
         block_template = {
