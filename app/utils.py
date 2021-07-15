@@ -318,7 +318,8 @@ def prepare_notification_message(user):
 
 # validate /api/add_standup/ API payload
 def is_standup_valid(**payload):
-    if all(key in payload for key in ["questions", "is_active", "trigger", "publish_channel"]):
+    required_keys = ["questions", "is_active", "trigger", "publish_channel"]
+    if all(key in payload for key in required_keys):
         return True
     return False
 

@@ -249,7 +249,7 @@ def add_standup():
     return jsonify(
         {
             "success": False,
-            "reason": "Incorrect payload. Required: questions, is_active, trigger",
+            "reason": "Incorrect payload. Required: questions, is_active, trigger, publish_channel",
         }
     )
 
@@ -279,7 +279,7 @@ def update_standup(standup_id):
     return jsonify(
         {
             "success": False,
-            "reason": "Incorrect payload. Required: questions, is_active, trigger",
+            "reason": "Incorrect payload. Required: questions, is_active, trigger, publish_channel",
         }
     )
 
