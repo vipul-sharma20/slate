@@ -14,6 +14,8 @@ NO_USER_ERROR_MESSAGE = (
     "Your user details or standup for your user/team doesn't exist in the database."
 )
 
+STANDUP_EXISTS_MESSAGE = "Your submission is already created for today"
+
 STANDUP_CHANNEL_ID = os.environ.get("STANDUP_CHANNEL_ID")
 POST_PUBLISH_STATS = os.environ.get("POST_PUBLISH_STATS", 0)
 

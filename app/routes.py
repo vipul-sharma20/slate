@@ -17,6 +17,7 @@ from app.constants import (
     BUTTON_TRIGGER,
     SLASH_COMMAND_TRIGGER,
     BLOCK_SIZE,
+    STANDUP_EXISTS_MESSAGE
 )
 from app.models import Submission, Standup, User, Team, db
 from app.utils import authenticate
@@ -94,6 +95,15 @@ def standup_modal():
         )
 
         user = User.query.filter_by(user_id=user_payload.get("id")).first()
+
+        todays_datetime = datetime(
+            datetime.today().year, datetime.today().month, datetime.today().day
+        )
+        if Submission.query.filter(Submission.created_at >= todays_datetime).count():
+            client.chat_postMessage(channel=user.user_id,
+                                    text=STANDUP_EXISTS_MESSAGE)
+            return make_response("", 200)
+
         submission = Submission(user_id=user.id, **data)
         db.session.add(submission)
         db.session.commit()
