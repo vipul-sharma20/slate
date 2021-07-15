@@ -17,8 +17,8 @@ association_table = Table(
 
 
 class PostSubmitActionEnum(enum.Enum):
-    CAT = 1
-    DOG = 2
+    cat = 1
+    dog = 2
 
 
 class User(db.Model):
