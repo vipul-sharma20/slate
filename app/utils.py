@@ -77,6 +77,7 @@ def build_standup(submissions, is_single=False) -> list:
 
             title = block.get("label", {}).get("text", "")
             content = values.get(block_id, {}).get(action_id, {}).get("value", "")
+            content = beautify_slack_markup(content)
 
             standup_field = {"type": "mrkdwn", "text": f"\n*{title}*\n{content}\n"}
             standup_content_section["text"] = standup_field
@@ -84,6 +85,14 @@ def build_standup(submissions, is_single=False) -> list:
             formatted_standup.append(standup_content_section)
         formatted_standup.append(STANDUP_SECTION_DIVIDER)
     return formatted_standup
+
+
+# Beautify text content
+def beautify_slack_markup(markup: str) -> str:
+    markup = markup.replace("* ", "• ")
+    markup = markup.replace("- ", "• ")
+
+    return markup
 
 
 # Slack can't post more than 50 blocks. This function will chunk the
