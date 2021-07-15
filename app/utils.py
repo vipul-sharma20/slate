@@ -127,9 +127,9 @@ def after_submission(submission, payload) -> None:
 def after_submission_message(post_submit_action: PostSubmitActionEnum) -> List[Dict]:
     blocks = [SUBMIT_TEMPLATE_SECTION_1]
 
-    if post_submit_action.name == PostSubmitActionEnum.CAT:
+    if post_submit_action == PostSubmitActionEnum.cat:
         response = requests.get(
-            CAT_API_HOST + "/api/images/get?type=jpg&size=med&format=json", timeout=3
+            CAT_API_HOST + "/api/images/get?type=jpg&size=med&format=json", timeout=2
         )
 
         if response.ok:
@@ -145,7 +145,7 @@ def after_submission_message(post_submit_action: PostSubmitActionEnum) -> List[D
                     "alt_text": "image",
                 }
             )
-    elif post_submit_action.name == PostSubmitActionEnum.DOG:
+    elif post_submit_action == PostSubmitActionEnum.dog:
         pass
 
     return blocks
