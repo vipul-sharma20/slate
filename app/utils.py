@@ -67,6 +67,9 @@ def build_standup(submissions, is_single=False) -> list:
         values = standup_json.get("state", {}).get("values", {})
 
         for block in blocks:
+            if block.get("type") == "section":
+                continue
+
             standup_content_section = {"type": "section", "text": {}}
 
             block_id = block.get("block_id", "")
