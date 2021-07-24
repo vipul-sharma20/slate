@@ -1,7 +1,8 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, Enum, Time
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, \
+    Enum, Time
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -29,8 +30,10 @@ class User(db.Model):
     user_id = Column(String(20), unique=False)
     username = Column(String(50), unique=False)
     is_active = Column(Boolean, unique=False, default=True)
-    submission = relationship("Submission", lazy='dynamic', back_populates="user")
-    team = relationship("Team", secondary=association_table, back_populates="user")
+    submission = relationship(
+        "Submission", lazy='dynamic', back_populates="user")
+    team = relationship("Team", secondary=association_table,
+                        back_populates="user")
     created_at = Column(db.DateTime, default=datetime.utcnow, nullable=True)
     post_submit_action = Column(Enum(PostSubmitActionEnum), nullable=True)
 
@@ -47,7 +50,8 @@ class Team(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(20), unique=True, nullable=True)
     standup = relationship("Standup", uselist=False, back_populates="team")
-    user = relationship("User", secondary=association_table, back_populates="team")
+    user = relationship("User", secondary=association_table,
+                        back_populates="team")
     created_at = Column(db.DateTime, default=datetime.utcnow, nullable=True)
 
 
