@@ -241,8 +241,7 @@ def get_user(username):
 @authenticate
 def get_users():
     users = User.query.all()
-    users_response = [utils.prepare_user_response(user) for user in users]
-    return jsonify({"success": True, "users": users_response})
+    return jsonify({"success": True, "users": utils.prepare_user_response(users)})
 
 
 # Add a new standup to DB
