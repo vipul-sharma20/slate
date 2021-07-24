@@ -6,11 +6,10 @@ from functools import wraps
 from typing import List, Dict
 
 import requests
-from slack_sdk import WebClient
 from flask import request, jsonify
 from sqlalchemy import and_
 
-from app import app_cache
+from app import app_cache, client
 from app.models import Submission, PostSubmitActionEnum, User, Standup
 from app.constants import (
     STANDUP_INFO_SECTION,
@@ -23,8 +22,6 @@ from app.constants import (
     CAT_API_HOST,
     NOTIFICATION_BLOCKS,
 )
-
-client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 
 
 def authenticate(func):
@@ -108,7 +105,6 @@ def chunk_blocks(blocks: list, chunk_size: int) -> list:
 # Handle after standup submission process
 def after_submission(submission, is_edit=False) -> None:
     now = datetime.now().time()
-    client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 
     publish_time = datetime.strptime(
         os.environ.get("STANDUP_PUBLISH_TIME", "13:00"), "%H:%M"
