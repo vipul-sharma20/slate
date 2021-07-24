@@ -105,12 +105,12 @@ def standup_modal():
             datetime.today().year, datetime.today().month, datetime.today().day
         )
 
-        after_submission = True
+        is_edit = False
         if submission := utils.submission_exists(user):
             client.chat_postMessage(channel=user.user_id,
                                     text=SUBMISSION_UPDATED_MESSAGE)
             submission.standup_submission = standup_submission
-            after_submission = False
+            is_edit = True
         else:
             submission = Submission(user_id=user.id,
                                     standup_submission=standup_submission)
@@ -118,8 +118,7 @@ def standup_modal():
         db.session.add(submission)
         db.session.commit()
 
-    if after_submission:
-        utils.after_submission(submission, payload)
+    utils.after_submission(submission, payload, is_edit)
 
     return make_response("", 200)
 

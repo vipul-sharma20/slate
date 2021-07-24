@@ -14,7 +14,8 @@ NO_USER_ERROR_MESSAGE = (
     "Your user details or standup for your user/team doesn't exist in the database."
 )
 
-STANDUP_EXISTS_MESSAGE = "You've already made a standup submission for today"
+SUBMISSION_EXISTS_MESSAGE = "You've already made a standup submission for today"
+SUBMISSION_UPDATED_MESSAGE = "Your submission has been updated"
 
 STANDUP_CHANNEL_ID = os.environ.get("STANDUP_CHANNEL_ID")
 POST_PUBLISH_STATS = os.environ.get("POST_PUBLISH_STATS", 0)
@@ -76,3 +77,19 @@ SUBMIT_TEMPLATE_SECTION_2 = {
     "text": {"type": "mrkdwn", "text": "Here's a cat for you"},
 }
 
+SUBMIT_TEMPLATE_SECTION_3 = {
+    "type": "section",
+    "text": {"type": "mrkdwn", "text": "Your responses below"},
+}
+
+EDIT_DIALOG_SECTION = {
+        "type": "actions",
+        "elements": [
+            {
+                "type": "button",
+                "text": {"type": "plain_text", "emoji": True, "text": "Edit"},
+                "style": "primary",
+                "value": "open_dialog",
+            }
+        ],
+    }

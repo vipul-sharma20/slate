@@ -8,15 +8,18 @@ from typing import List, Dict
 import requests
 from slack import WebClient
 from flask import request, jsonify
+from sqlalchemy import and_
 
 from app import app_cache
-from app.models import Submission, PostSubmitActionEnum
+from app.models import Submission, PostSubmitActionEnum, User, Standup
 from app.constants import (
     STANDUP_INFO_SECTION,
     STANDUP_SECTION_DIVIDER,
     STANDUP_HELP_SECTION,
     SUBMIT_TEMPLATE_SECTION_1,
     SUBMIT_TEMPLATE_SECTION_2,
+    SUBMIT_TEMPLATE_SECTION_3,
+    EDIT_DIALOG_SECTION,
     CAT_API_HOST,
     NOTIFICATION_BLOCKS,
 )
@@ -103,7 +106,7 @@ def chunk_blocks(blocks: list, chunk_size: int) -> list:
 
 
 # Handle after standup submission process
-def after_submission(submission, payload) -> None:
+def after_submission(submission, payload, is_edit=False) -> None:
     now = datetime.now().time()
     client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 
@@ -111,15 +114,21 @@ def after_submission(submission, payload) -> None:
         os.environ.get("STANDUP_PUBLISH_TIME", "13:00"), "%H:%M"
     ).time()
 
+    blocks = build_standup([submission], True)
     if now > publish_time:
         client.chat_postMessage(
             channel=submission.user.team[0].standup.publish_channel,
-            blocks=build_standup([submission], True),
+            blocks=blocks,
         )
 
+    if not is_edit:
+        client.chat_postMessage(
+            channel=submission.user.user_id,
+            blocks=after_submission_message(submission.user.post_submit_action)
+        )
     client.chat_postMessage(
         channel=submission.user.user_id,
-        blocks=after_submission_message(submission.user.post_submit_action)
+        blocks=[SUBMIT_TEMPLATE_SECTION_3] + blocks + [EDIT_DIALOG_SECTION],
     )
 
 
