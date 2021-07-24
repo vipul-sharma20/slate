@@ -344,3 +344,14 @@ def is_get_submission_valid(**params):
     if all(key in params for key in ["id"]):
         return True
     return False
+
+
+def standup_exists(user: User) -> Submission:
+    todays_datetime = datetime(
+        datetime.today().year, datetime.today().month, datetime.today().day
+    )
+
+    return Submission.query.filter(
+        and_(Submission.user_id == user.id,
+             Submission.created_at >= todays_datetime)).first()
+
