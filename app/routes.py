@@ -434,29 +434,36 @@ def get_submission(user_id):
         )
 
     if start_date and end_date:
-        submissions = (
-            Submission.query.filter_by(user_id=user_id)
-            .filter(
+        submissions = Submission.query.filter(
+            and_(
+                Submission.user_id == user_id,
                 Submission.created_at >= start_date,
                 Submission.created_at <= end_date,
             )
             .order_by(Submission.created_at.desc())
             .all()
         )
+
     elif start_date:
-        submissions = (
-            Submission.query.filter_by(user_id=user_id)
-            .filter(Submission.created_at >= start_date)
+        submissions = Submission.query.filter(
+            and_(
+                Submission.user_id == user_id,
+                Submission.created_at >= start_date,
+            )
             .order_by(Submission.created_at.desc())
             .all()
         )
+
     elif end_date:
-        submissions = (
-            Submission.query.filter_by(user_id=user_id)
-            .filter(Submission.created_at <= end_date)
+        submissions = Submission.query.filter(
+            and_(
+                Submission.user_id == user_id,
+                Submission.created_at <= end_date,
+            )
             .order_by(Submission.created_at.desc())
             .all()
         )
+
     else:
         submissions = (
             Submission.query.filter_by(user_id=user_id)
