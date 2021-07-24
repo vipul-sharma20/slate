@@ -193,11 +193,12 @@ def add_user():
         team_id = payload.get("team_id")
         team = Team.query.filter(Team.id == team_id).first()
 
-        user = User()
-        user.user_id = payload.get("user_id")
-        user.username = payload.get("username")
-        user.is_active = payload.get("is_active")
-        user.team.append(team)
+        user = User(
+            user_id=payload.get("user_id"),
+            username=payload.get("username"),
+            is_active=payload.get("is_active"),
+            team=[team],
+        )
 
         db.session.add(user)
         db.session.commit()
