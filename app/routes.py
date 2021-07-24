@@ -100,9 +100,7 @@ def standup_modal():
         todays_datetime = datetime(
             datetime.today().year, datetime.today().month, datetime.today().day
         )
-        if Submission.query.filter(
-                       and_(Submission.user_id == user.id,
-                            Submission.created_at >= todays_datetime)).count():
+        if utils.submission_exists(user):
             client.chat_postMessage(channel=user.user_id,
                                     text=STANDUP_EXISTS_MESSAGE)
             return make_response("", 200)
