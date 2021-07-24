@@ -6,6 +6,7 @@ from flask import request, make_response, jsonify, redirect, url_for
 from flask import current_app as app
 from slack import WebClient
 from slack.errors import SlackApiError
+from sqlalchemy import and_
 
 from app.constants import (
     ALL,
@@ -99,7 +100,9 @@ def standup_modal():
         todays_datetime = datetime(
             datetime.today().year, datetime.today().month, datetime.today().day
         )
-        if Submission.query.filter(Submission.created_at >= todays_datetime).count():
+        if Submission.query.filter(
+                       and_(Submission.user_id == user.id,
+                            Submission.created_at >= todays_datetime)).count():
             client.chat_postMessage(channel=user.user_id,
                                     text=STANDUP_EXISTS_MESSAGE)
             return make_response("", 200)
