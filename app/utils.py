@@ -267,14 +267,18 @@ def prepare_standup_table_data(**payload):
 
 
 # Prepare response for fetch user APIs
-def prepare_user_response(user):
-    return {
-        "id": user.id,
-        "username": user.username,
-        "is_active": user.is_active,
-        "user_id": user.user_id,
-        "team": [team.name for team in user.team],
-    }
+def prepare_user_response(users: List[User]) -> List[Dict]:
+    response: List = []
+
+    for user in users:
+        response.append({
+            "id": user.id,
+            "username": user.username,
+            "is_active": user.is_active,
+            "user_id": user.user_id,
+            "team": [team.name for team in user.team],
+        })
+    return response
 
 
 # Prepare response for get user submission API

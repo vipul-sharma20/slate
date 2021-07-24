@@ -232,11 +232,8 @@ def update_user(user_id):
 @app.route("/api/get_user/<username>/", methods=["GET"])
 @authenticate
 def get_user(username):
-    try:
-        user = User.query.filter_by(username=username).first()
-        return jsonify({"success": True, "user": utils.prepare_user_response(user)})
-    except:
-        return jsonify({"success": False, "reason": "Username does not exist"})
+    users = User.query.filter(User.username.contains(username)).all()
+    return jsonify({"success": True, "users": utils.prepare_user_response(users)})
 
 
 # Get all users
