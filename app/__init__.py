@@ -1,4 +1,6 @@
 import os
+import datetime
+from json import JSONEncoder
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -17,10 +19,20 @@ signature_verifier = SignatureVerifier(os.environ["SLACK_SIGNING_SECRET"])
 app_cache = Cache()
 
 
+# Custom encoder to serialize datetime objects
+class StandupJSONEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (datetime.date, datetime.datetime)):
+            return obj.isoformat()
+        elif isinstance(obj, datetime.time):
+            return obj.strftime("%H:%M")
+
+
 def create_app():
     """Construct the core application."""
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object('config.Config')
+    app.json_encoder = StandupJSONEncoder
 
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
