@@ -3,7 +3,7 @@ import json
 import math
 from datetime import datetime
 from functools import wraps
-from typing import List, Dict
+from typing import List, Dict, Any, Iterator, Tuple
 
 import requests
 from flask import request, jsonify
@@ -48,7 +48,7 @@ def authenticate(func):
 
 
 # Format standups in the Slack's block syntax
-def build_standup(submissions, is_single=False) -> list:
+def build_standup(submissions: List[Submission], is_single: bool = False) -> List[Dict[str, Any]]:
     formatted_standup: list = []
 
     if not is_single:
@@ -97,13 +97,13 @@ def beautify_slack_markup(markup: str) -> str:
 
 # Slack can't post more than 50 blocks. This function will chunk the
 # blocks into blocks of 50 or chunk_size
-def chunk_blocks(blocks: list, chunk_size: int) -> list:
+def chunk_blocks(blocks: List[Dict], chunk_size: int) -> Iterator[List[Dict[str, Any]]]:
     for i in range(0, len(blocks), chunk_size):
         yield blocks[i:i + chunk_size]
 
 
 # Handle after standup submission process
-def after_submission(submission, is_edit=False) -> None:
+def after_submission(submission: Submission, is_edit: bool = False) -> None:
     now = datetime.now().time()
 
     publish_time = datetime.strptime(
@@ -130,7 +130,7 @@ def after_submission(submission, is_edit=False) -> None:
 
 
 # Random friendly message
-def add_optional_block(post_submit_action: PostSubmitActionEnum) -> List[Dict]:
+def add_optional_block(post_submit_action: PostSubmitActionEnum) -> List[Dict[str, Any]]:
     blocks: List = []
 
     if post_submit_action == PostSubmitActionEnum.cat:
@@ -158,12 +158,12 @@ def add_optional_block(post_submit_action: PostSubmitActionEnum) -> List[Dict]:
 
 
 # Send direct text message
-def send_direct_message(user_id, text) -> None:
+def send_direct_message(user_id: str, text: str) -> None:
     client.chat_postMessage(channel=user_id, text=text)
 
 
 # Check if new submission is eligible
-def is_submission_eligible(payload: dict) -> bool:
+def is_submission_eligible(payload: Dict) -> bool:
     """
     TODO: Don't allow multiple submissions by same user on same day
     """
@@ -171,7 +171,7 @@ def is_submission_eligible(payload: dict) -> bool:
 
 
 # Post standup user stats after publish
-def post_publish_stat(users) -> list:
+def post_publish_stat(users: List[User]) -> List[str]:
     no_submit_users: list = []
     users = users.all()
 
@@ -190,7 +190,7 @@ def post_publish_stat(users) -> list:
 
 
 # Find how much time left to report
-def time_left(publish_time) -> str:
+def time_left(publish_time: str) -> str:
     text: str = ""
 
     publish_datetime = datetime(
@@ -217,7 +217,7 @@ def time_left(publish_time) -> str:
 
 
 # Show pretty dump of questions from block kit for standup
-def format_standup(standup) -> dict:
+def format_standup(standup: Standup) -> Dict[str, Any]:
     pretty_dict: dict = {**standup}
     pretty_dict["questions"] = []
 
@@ -231,7 +231,7 @@ def format_standup(standup) -> dict:
 
 
 # Convert list of questions to block kit form
-def questions_to_blockkit(questions: list) -> dict:
+def questions_to_blockkit(questions: List[str]) -> Dict[str, Any]:
     blockkit_form = {
         "title": {"type": "plain_text", "text": "Daily Standup", "emoji": True},
         "submit": {"type": "plain_text", "text": "Submit", "emoji": True},
@@ -253,7 +253,7 @@ def questions_to_blockkit(questions: list) -> dict:
 
 
 # prepare data for Standup table
-def prepare_standup_table_data(**payload):
+def prepare_standup_table_data(**payload: Dict[str, Any]) -> Dict[str, Any]:
     data: dict = {}
 
     data["is_active"] = payload.get("is_active", False)
@@ -279,7 +279,7 @@ def prepare_user_response(users: List[User]) -> List[Dict]:
 
 
 # Prepare response for get user submission API
-def prepare_user_submission(submission) -> dict:
+def prepare_user_submission(submission: Submission) -> Dict[str, Any]:
     submission_response = dict(
         created_at=submission.created_at,
         submission_id=submission.id,
@@ -308,12 +308,12 @@ def prepare_user_submission(submission) -> dict:
 
 
 # List of slash commands available to a user
-def get_user_slash_commands(user):
+def get_user_slash_commands(user: User) -> List[str]:
     return [f"`/standup {team.name}`" for team in user.team]
 
 
 # Notification message builder
-def prepare_notification_message(user):
+def prepare_notification_message(user: User) -> Tuple[str, List[Any]]:
     num_teams = len(user.team)
 
     # TODO: Fix team specific notification
@@ -342,7 +342,7 @@ def prepare_notification_message(user):
 
 
 # validate /api/add_standup/ API payload
-def is_standup_valid(**payload):
+def is_standup_valid(**payload: Dict[str, Any]) -> bool:
     required_keys = ["questions", "is_active", "trigger", "publish_channel"]
     if all(key in payload for key in required_keys):
         return True
@@ -350,7 +350,7 @@ def is_standup_valid(**payload):
 
 
 # validate /api/get_submission/ API params
-def is_get_submission_valid(**params):
+def is_get_submission_valid(**params: Dict[str, Any]) -> bool:
     if all(key in params for key in ["id"]):
         return True
     return False
