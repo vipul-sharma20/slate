@@ -544,14 +544,16 @@ def get_submissions():
 @authenticate
 def add_team():
     payload = request.json
+
     if payload:
-        team = Team()
         standup = Standup.query.filter(
             Standup.id == payload.get("standup_id")).first()
-        team.standup = standup
-        team.name = payload.get("name")
+
+        team = Team(standup=standup, name=payload.get("name"))
+
         db.session.add(team)
         db.session.commit()
+
     return jsonify({"success": True, "team_id": team.id})
 
 
