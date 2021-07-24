@@ -6,7 +6,7 @@ from functools import wraps
 from typing import List, Dict
 
 import requests
-from slack import WebClient
+from slack_sdk import WebClient
 from flask import request, jsonify
 from sqlalchemy import and_
 

@@ -4,8 +4,8 @@ from datetime import datetime
 
 from flask import request, make_response, jsonify, redirect, url_for
 from flask import current_app as app
-from slack import WebClient
-from slack.errors import SlackApiError
+from slack_sdk.errors import SlackApiError
+from slack_sdk.signature import SignatureVerifier
 from sqlalchemy import and_
 
 from app.constants import (
