@@ -270,12 +270,12 @@ def prepare_user_response(user):
 
 # Prepare response for get user submission API
 def prepare_user_submission(submission) -> dict:
-    submission_response: dict = {}
-    submission_response["created_at"] = submission.created_at
-    submission_response["submission_id"] = submission.id
-    submission_response["user_id"] = submission.user_id
-    submission_response["username"] = submission.user.username
-    submission_response["submission"] = []
+    submission_response = dict(
+        created_at=submission.created_at,
+        submission_id=submission.id,
+        user_id=submission.user_id,
+        username=submission.user.username,
+        submission=[])
 
     response_json = json.loads(submission.standup_submission)
     blocks = response_json.get("blocks", [])
