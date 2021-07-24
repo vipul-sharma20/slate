@@ -79,7 +79,7 @@ SUBMIT_TEMPLATE_SECTION_2 = {
 
 SUBMIT_TEMPLATE_SECTION_3 = {
     "type": "section",
-    "text": {"type": "mrkdwn", "text": "Your responses below"},
+    "text": {"type": "mrkdwn", "text": "*Your responses below*"},
 }
 
 EDIT_DIALOG_SECTION = {
