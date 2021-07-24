@@ -265,7 +265,7 @@ def add_standup():
             db.session.commit()
 
             return jsonify({"success": True, "standup_id": standup.id})
-        except:
+        except Exception:
             return jsonify(
                 {
                     "success": False,
@@ -295,7 +295,7 @@ def update_standup(standup_id):
             Standup.query.get(standup_id).update(**data)
             db.session.commit()
             return jsonify({"success": True})
-        except:
+        except Exception:
             return jsonify(
                 {
                     "success": False,
@@ -326,7 +326,7 @@ def get_standup(standup_id):
                     "standup": utils.format_standup(filter_keys(standup.__dict__)),
                 }
             )
-        except:
+        except Exception:
             return jsonify(
                 {
                     "success": False,
