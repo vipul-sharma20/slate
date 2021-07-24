@@ -106,7 +106,7 @@ def chunk_blocks(blocks: list, chunk_size: int) -> list:
 
 
 # Handle after standup submission process
-def after_submission(submission, payload, is_edit=False) -> None:
+def after_submission(submission, is_edit=False) -> None:
     now = datetime.now().time()
     client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 

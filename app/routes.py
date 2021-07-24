@@ -125,7 +125,7 @@ def standup_modal():
         db.session.add(submission)
         db.session.commit()
 
-    utils.after_submission(submission, payload, is_edit)
+    utils.after_submission(submission, is_edit)
 
     return make_response("", 200)
 
