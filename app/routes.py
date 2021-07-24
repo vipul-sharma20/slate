@@ -97,7 +97,7 @@ def standup_modal():
     payload = json.loads(request.form.get("payload"))
     standup_submission = json.dumps(payload.get("view"))
 
-    # Triggered by action button click
+    # Triggered by action button click. Redirect to open standup form.
     if payload.get("type") == "block_actions":
         return redirect(
             url_for("standup_trigger", messages=request.form.get("payload"))
