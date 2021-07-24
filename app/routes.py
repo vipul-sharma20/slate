@@ -37,6 +37,9 @@ def standup_trigger():
         user_id = data.get("user", {}).get("id")
         action_type = BUTTON_TRIGGER
     else:
+        if not signature_verifier.is_valid_request(request.get_data(), request.headers):
+            return make_response("invalid request", 403)
+
         data = request.form
         user_id = data.get("user_id")
         action_type = SLASH_COMMAND_TRIGGER
@@ -88,6 +91,9 @@ def standup_trigger():
 # Callback for form submission on Slack
 @app.route("/slack/submit_standup/", methods=["POST"])
 def standup_modal():
+    if not signature_verifier.is_valid_request(request.get_data(), request.headers):
+        return make_response("invalid request", 403)
+
     payload = json.loads(request.form.get("payload"))
     standup_submission = json.dumps(payload.get("view"))
 
