@@ -18,7 +18,7 @@ from app.constants import (
     BUTTON_TRIGGER,
     SLASH_COMMAND_TRIGGER,
     BLOCK_SIZE,
-    STANDUP_EXISTS_MESSAGE
+    SUBMISSION_UPDATED_MESSAGE,
 )
 from app.models import Submission, Standup, User, Team, db
 from app.utils import authenticate
@@ -62,6 +62,12 @@ def standup_trigger():
         # in the case of slash command trigger.
         standup = team.standup
 
+        if submission := utils.submission_exists(user):
+            client.views_open(
+                trigger_id=data.get("trigger_id"),
+                view=utils.create_edit_view(standup, submission)
+            )
+
         client.views_open(
             trigger_id=data.get("trigger_id"), view=standup.standup_blocks
         )
@@ -82,6 +88,7 @@ def standup_trigger():
 @app.route("/slack/submit_standup/", methods=["POST"])
 def standup_modal():
     payload = json.loads(request.form.get("payload"))
+    standup_submission = json.dumps(payload.get("view"))
 
     # Triggered by action button click
     if payload.get("type") == "block_actions":
@@ -91,25 +98,28 @@ def standup_modal():
 
     if payload and utils.is_submission_eligible(payload):
         user_payload = payload.get("user", {})
-        data = dict(
-            standup_submission=json.dumps(payload.get("view")),
-        )
 
         user = User.query.filter_by(user_id=user_payload.get("id")).first()
 
         todays_datetime = datetime(
             datetime.today().year, datetime.today().month, datetime.today().day
         )
-        if utils.submission_exists(user):
-            client.chat_postMessage(channel=user.user_id,
-                                    text=STANDUP_EXISTS_MESSAGE)
-            return make_response("", 200)
 
-        submission = Submission(user_id=user.id, **data)
+        after_submission = True
+        if submission := utils.submission_exists(user):
+            client.chat_postMessage(channel=user.user_id,
+                                    text=SUBMISSION_UPDATED_MESSAGE)
+            submission.standup_submission = standup_submission
+            after_submission = False
+        else:
+            submission = Submission(user_id=user.id,
+                                    standup_submission=standup_submission)
+
         db.session.add(submission)
         db.session.commit()
 
-    utils.after_submission(submission, payload)
+    if after_submission:
+        utils.after_submission(submission, payload)
 
     return make_response("", 200)
 

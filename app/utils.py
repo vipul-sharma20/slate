@@ -356,3 +356,29 @@ def submission_exists(user: User) -> Submission:
         and_(Submission.user_id == user.id,
              Submission.created_at >= todays_datetime)).first()
 
+
+# Create block kit filled with existing responses for standup
+def create_edit_view(standup: Standup, submission: Submission) -> str:
+    standup_json = json.loads(submission.standup_submission)
+    submission_text_list: List = []
+
+    # Create list of existing responses
+    blocks = standup_json.get("blocks", [])
+    for block in blocks:
+        block_id = block.get("block_id", "")
+        action_id = block.get("element", {}).get("action_id", "")
+
+        values = standup_json.get("state", {}).get("values", {})
+        submission_text_list.append(values.get(
+            block_id, {}).get(action_id, {}).get("value", ""))
+
+    # Create edit view filled with responses
+    standup_blocks = json.loads(standup.standup_blocks)
+    filled_blocks: List = []
+    for idx, block in enumerate(standup_blocks.get("blocks", [])):
+        if block["type"] == "input":
+            block["element"]["initial_value"] = submission_text_list[idx]
+        filled_blocks.append(block)
+    standup_blocks["blocks"] = filled_blocks
+
+    return json.dumps(standup_blocks)
