@@ -24,12 +24,6 @@ from app.constants import (
     SUBMISSION_UPDATED_MESSAGE,
     STANDUP_INFO_SECTION
 )
-from app.models import Submission, Standup, User, Team, db
-from app.utils import authenticate
-import app.utils as utils
-
-
-client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 
 
 # Callback for entrypoint trigger on Slack (slash command etc.)
