@@ -19,6 +19,7 @@ from app.constants import (
     SLASH_COMMAND_TRIGGER,
     BLOCK_SIZE,
     SUBMISSION_UPDATED_MESSAGE,
+    STANDUP_INFO_SECTION
 )
 from app.models import Submission, Standup, User, Team, db
 from app.utils import authenticate
@@ -153,12 +154,19 @@ def publish_standup(team_name):
                 continue
             submissions.append(submission)
 
-        blocks_chunk = utils.chunk_blocks(utils.build_standup(submissions),
+        message_response = client.chat_postMessage(
+            channel=team.standup.publish_channel,
+            text="Standup complete",
+            blocks=[STANDUP_INFO_SECTION],
+        )
+
+        blocks_chunk = utils.chunk_blocks(utils.build_standup(submissions, True),
                                           BLOCK_SIZE)
         for blocks in blocks_chunk:
             client.chat_postMessage(
                 channel=team.standup.publish_channel,
                 text="Standup complete",
+                thread_ts=message_response.get("ts"),
                 blocks=blocks,
             )
         if POST_PUBLISH_STATS:
