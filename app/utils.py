@@ -124,7 +124,8 @@ def after_submission(submission, is_edit=False) -> None:
     if not is_edit:
         client.chat_postMessage(
             channel=submission.user.user_id,
-            blocks=after_submission_message(submission.user.post_submit_action)
+            blocks=[SUBMIT_TEMPLATE_SECTION_1] +
+            add_optional_block(submission.user.post_submit_action)
         )
     client.chat_postMessage(
         channel=submission.user.user_id,
@@ -133,8 +134,8 @@ def after_submission(submission, is_edit=False) -> None:
 
 
 # Random friendly message
-def after_submission_message(post_submit_action: PostSubmitActionEnum) -> List[Dict]:
-    blocks = [SUBMIT_TEMPLATE_SECTION_1]
+def add_optional_block(post_submit_action: PostSubmitActionEnum) -> List[Dict]:
+    blocks: List = []
 
     if post_submit_action == PostSubmitActionEnum.cat:
         response = requests.get(
