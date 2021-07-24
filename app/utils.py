@@ -346,6 +346,7 @@ def is_get_submission_valid(**params):
     return False
 
 
+# Check if submission exists for a user for current day
 def submission_exists(user: User) -> Submission:
     todays_datetime = datetime(
         datetime.today().year, datetime.today().month, datetime.today().day
