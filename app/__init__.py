@@ -14,7 +14,7 @@ client = WebClient(token=os.environ["SLACK_API_TOKEN"])
 signature_verifier = SignatureVerifier(os.environ["SLACK_SIGNING_SECRET"])
 
 # redis_client = redis.Redis(host=os.environ.get("REDIS_HOST", "localhost"), port=os.environ.get("REDIS_PORT", 6379), db=0)
-app_cache = cache.Cache()
+app_cache = Cache()
 
 
 def create_app():
