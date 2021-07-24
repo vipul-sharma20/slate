@@ -5,9 +5,12 @@ from datetime import datetime
 from flask import request, make_response, jsonify, redirect, url_for
 from flask import current_app as app
 from slack_sdk.errors import SlackApiError
-from slack_sdk.signature import SignatureVerifier
 from sqlalchemy import and_
 
+import app.utils as utils
+from app import client, signature_verifier
+from app.models import Submission, Standup, User, Team, db
+from app.utils import authenticate
 from app.constants import (
     ALL,
     ACTIVE,
