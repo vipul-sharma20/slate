@@ -158,7 +158,8 @@ def publish_standup(team_name):
             no_submit_users = utils.post_publish_stat(users)
             message = f"{NO_USER_SUBMIT_MESSAGE} {', '.join(no_submit_users)}"
 
-            client.chat_postMessage(channel=team.standup.publish_channel, text=message)
+            client.chat_postMessage(
+                channel=team.standup.publish_channel, text=message)
 
         return make_response(json.dumps(utils.build_standup(submissions)), 200)
     except SlackApiError as e:
@@ -395,7 +396,8 @@ def notify_users(team_name):
         # the standup it's associated with.
         if len(submissions) < num_teams:
             text, blocks = utils.prepare_notification_message(user)
-            client.chat_postMessage(channel=user.user_id, text=text, blocks=blocks)
+            client.chat_postMessage(
+                channel=user.user_id, text=text, blocks=blocks)
     return jsonify({"success": True})
 
 
@@ -504,7 +506,8 @@ def get_submissions():
         )
     else:
         submissions = (
-            Submission.query.order_by(Submission.created_at.desc()).limit(50).all()
+            Submission.query.order_by(
+                Submission.created_at.desc()).limit(50).all()
         )
 
     return jsonify(
@@ -524,7 +527,8 @@ def add_team():
     payload = request.json
     if payload:
         team = Team()
-        standup = Standup.query.filter(Standup.id == payload.get("standup_id")).first()
+        standup = Standup.query.filter(
+            Standup.id == payload.get("standup_id")).first()
         team.standup = standup
         team.name = payload.get("name")
         db.session.add(team)
