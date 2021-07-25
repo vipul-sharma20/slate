@@ -1,9 +1,68 @@
 # slack-standup
 
-An application for Slack based standups. This is a Flask server application to
-handle Slack callbacks, create/submit standups, report to a channel etc.
+Self hosted Slack app for daily standups.
+
+## Features
+
+- Create standup submissions using Slack dialog box or slash commands.
+- Ability to add different standup forms/questions for different teams.
+- Notify users to submit their standups.
+- Publish standup responses to a Slack channel. Can configure different Slack
+  channels for different teams.
+- CRUD APIs to manage standups, submissions, users, teams etc.
+
 
 Check usage and API further in the README.
+
+## Deployment
+
+```
+docker-compose up
+```
+
+Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slack-standup
+
+Make sure to update the following environment variables.
+
+#### Slack tokens
+
+- `SLACK_SIGNING_SECRET`: 
+- `SLACK_API_TOKEN`: Bot user oauth token.
+
+#### Other application environment variables
+
+- `SQLALCHEMY_DATABASE_URI`: URI of the database to use.
+
+
+## Setting up the application on Slack
+
+### Using app manifest
+
+Create a new app on Slack and import the [`app_manifest.yml`](./app_manifest.yml) configuration.
+
+Make sure to update the following configs:
+
+- `url`: update host and port with the your deployment
+- `request_url`: update host and port with the your deployment
+
+Change any other information based on your preference for eg: slash commands etc.
+
+### Manual
+
+- Create an app on Slack, for example: `slack-standup`.
+- Create Slack bot token (check "OAuth & Permissions" in your app page) and add
+  it as environment variable in [docker-compose.yml][docker-compose].
+    - Add following scopes: `channels:history`, `chat:write`, `commands`,
+      `users:read`.
+- Deploy the application with the tokens.
+- Under "Interactivity & Shortcuts" option, add request URL as
+  `host:port/slack/submit_standup/`
+- Add a slash command using the "Slash Commands" option.
+    - Use request URL as `host:port/slack/standup-trigger/`
+- Add the Slack app in your channel (Example: `/invite @slack-doc`).
+
+
+*Note: Anything below this is outdated. It's being updated as a part of: https://github.com/vipul-sharma20/slack-standup/issues/14*
 
 ## Screenshots
 
