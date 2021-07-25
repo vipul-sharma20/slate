@@ -1,11 +1,11 @@
 version: '3'
 services:
 
-  redis-master:
-    image: "redis"
-    ports:
-        - "6379:6379"
-    container_name: redis-master
+  # redis-master:
+  #   image: "redis"
+  #   ports:
+  #       - "6379:6379"
+  #   container_name: redis-master
 
   slack-standup:
       build: .
@@ -13,17 +13,20 @@ services:
           - "5000:5000"
       command: ["uwsgi", "--http-socket", ":5000", "--enable-threads", "--threads", "4", "--module", "app:create_app()", "--workers", "2", "--buffer-size", "32768"]
       environment:
-          - SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-          - SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+          - SLACK_SIGNING_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+          - SLACK_API_TOKEN=xoxb-xxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
+
+          # Postgres DB example
+          # - SQLALCHEMY_DATABASE_URI=postgresql://user@host.docker.internal
+          # - SQLALCHEMY_DATABASE_URI=postgresql://[user[:password]@][host][:port]
+
+          # Sqlite DB example
           - SQLALCHEMY_DATABASE_URI=sqlite:////home/slack-standup/standup.db
-          - STANDUP_CHANNEL_ID=XXXXXXXXXX
+
+          - STANDUP_CHANNEL_ID=xxxxxxxxxxx
           - FLASK_APP=app
           - ENVIRONMENT=DEBUG
           - REDIS_HOST=localhost
           - REDIS_PORT=6379
-          - STANDUP_PUBLISH_TIME=07:30
-          - CAT_MODE=1
           - POST_PUBLISH_STATS=1
-      volumes:
-          - ~/slack.db/:/home/slack-standup/standup.db
 

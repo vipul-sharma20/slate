@@ -22,5 +22,5 @@ RUN flask db upgrade
 
 CMD ["uwsgi", "--http-socket", ":5000", "--enable-threads", "--threads", "4", "--module", "app:create_app()", "--workers", "2", "--buffer-size", "32768"]
 
-# docker run -p 5000:5000 -v ~/standup.db:/home/slack-standup/standup.db -e SQLALCHEMY_DATABASE_URI=sqlite:////home/slack-standup/standup.db -e STANDUP_CHANNEL_ID=C0XXXXXXXXX -e SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -e SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -e STANDUP_PUBLISH_TIME=07:32 -i -t standup
+# docker run -p 5000:5000 -e SQLALCHEMY_DATABASE_URI=sqlite:////home/slack-standup/standup.db -e STANDUP_CHANNEL_ID=C0XXXXXXXXX -e SLACK_API_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -e SLACK_SIGNING_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -i -t standup
 
