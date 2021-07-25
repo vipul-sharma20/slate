@@ -17,7 +17,6 @@ NO_USER_ERROR_MESSAGE = (
 SUBMISSION_EXISTS_MESSAGE = "You've already made a standup submission for today"
 SUBMISSION_UPDATED_MESSAGE = "Your submission has been updated"
 
-STANDUP_CHANNEL_ID = os.environ.get("STANDUP_CHANNEL_ID")
 POST_PUBLISH_STATS = os.environ.get("POST_PUBLISH_STATS", 0)
 
 NO_USER_SUBMIT_MESSAGE = "Didn't hear from"

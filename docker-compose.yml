@@ -23,7 +23,6 @@ services:
           # Sqlite DB example
           - SQLALCHEMY_DATABASE_URI=sqlite:////home/slack-standup/standup.db
 
-          - STANDUP_CHANNEL_ID=xxxxxxxxxxx
           - FLASK_APP=app
           - ENVIRONMENT=DEBUG
           - REDIS_HOST=localhost
