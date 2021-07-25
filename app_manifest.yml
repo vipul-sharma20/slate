@@ -18,10 +18,10 @@ features:
 oauth_config:
   scopes:
     bot:
-      - channels:history
-      - chat:write
-      - commands
-      - users:read
+      - channels:history  # View messages and other content in public channels that standup has been added to
+      - chat:write  # Send messages as app user
+      - commands  # Add shortcuts and/or slash commands that people can use
+      - users:read  # View people in a workspace
 settings:
   interactivity:
     is_enabled: true
