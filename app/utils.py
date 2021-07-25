@@ -19,6 +19,7 @@ from app.constants import (
     SUBMIT_TEMPLATE_SECTION_2,
     SUBMIT_TEMPLATE_SECTION_3,
     EDIT_DIALOG_SECTION,
+    APP_CONTEXT_SECTION,
     CAT_API_HOST,
     NOTIFICATION_BLOCKS,
 )
@@ -122,7 +123,7 @@ def after_submission(submission: Submission, is_edit: bool = False) -> None:
         )
     client.chat_postMessage(
         channel=submission.user.user_id,
-        blocks=[SUBMIT_TEMPLATE_SECTION_3] + blocks + [EDIT_DIALOG_SECTION],
+        blocks=[SUBMIT_TEMPLATE_SECTION_3] + blocks + [EDIT_DIALOG_SECTION] + [APP_CONTEXT_SECTION],
     )
 
 

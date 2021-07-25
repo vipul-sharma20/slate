@@ -83,13 +83,23 @@ SUBMIT_TEMPLATE_SECTION_3 = {
 }
 
 EDIT_DIALOG_SECTION = {
-        "type": "actions",
-        "elements": [
+    "type": "actions",
+    "elements": [
             {
                 "type": "button",
                 "text": {"type": "plain_text", "emoji": True, "text": "Edit"},
                 "style": "primary",
                 "value": "open_dialog",
             }
-        ],
-    }
+    ],
+}
+
+APP_CONTEXT_SECTION = {
+    "type": "context",
+    "elements": [
+        {
+            "type": "mrkdwn",
+            "text": "For feature requests, issues etc. please add them in the <https://github.com/vipul-sharma20/slack-standup|issue tracker>."
+        }
+    ]
+}
