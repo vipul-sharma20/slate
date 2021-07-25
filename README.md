@@ -51,7 +51,7 @@ Change any other information based on your preference for eg: slash commands etc
 
 - Create an app on Slack, for example: `slack-standup`.
 - Create Slack bot token (check "OAuth & Permissions" in your app page) and add
-  it as environment variable in [docker-compose.yml][docker-compose].
+  it as environment variable in [`docker-compose.yml`](./docker-compose.yml).
     - Add following scopes: `channels:history`, `chat:write`, `commands`,
       `users:read`.
 - Deploy the application with the tokens.
