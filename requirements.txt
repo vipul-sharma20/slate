@@ -7,3 +7,4 @@ uWSGI==2.0.19.1
 redis==3.5.3
 Flask-Migrate==2.5.3
 slack-sdk==3.8.0
+psycopg2
