@@ -22,19 +22,21 @@ docker-compose up
 
 Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slack-standup
 
-Make sure to update the following environment variables.
+Make sure to update the following environment variables in [`docker-compose.yml`](./docker-compose.yml)
 
 #### Slack tokens
 
-- `SLACK_SIGNING_SECRET`: 
+- `SLACK_SIGNING_SECRET`: Slack signing secret
 - `SLACK_API_TOKEN`: Bot user oauth token.
 
 #### Other application environment variables
 
-- `SQLALCHEMY_DATABASE_URI`: URI of the database to use.
+- `SQLALCHEMY_DATABASE_URI`: URI of the database to use. By default, a Sqlite DB is configured.
 
 
 ## Setting up the application on Slack
+
+You can setup the Slack app using the app manifest (the easier way) or manually.
 
 ### Using app manifest
 
@@ -93,37 +95,11 @@ Change any other information based on your preference for eg: slash commands etc
 </p>
 
 
-
-## Configuration
-
-* Create a new standup app in your Slack workspace
-* Generate tokens and secrets
-* Create slash command to trigger the modal (eg: `/standup`)
-* Configure the HTTP URL for the slash command to: `http://127.0.0.0:5000/slack/standup-trigger/`. Replace `127.0.0.1:5000` with your deployment host/port.
-* Add HTTP URL in the "Interactivity & Shortcuts" to handle the form submission.
-    * Enable "Interactivity"
-    * URL: `http://127.0.0.1:5000/slack/submit_standup/`. Replace `127.0.0.1:5000` with your deployment host/port.
-
-Some environment variables for the application:
-
-```bash
-export SLACK_API_TOKEN="<slack-api-token-here>"
-export SLACK_SIGNING_SECRET="<slack-signing-secret-here>"
-export SQLALCHEMY_DATABASE_URI="sqlite:////path/to/standup.db"
-export STANDUP_CHANNEL_ID="C0XXXXXXXXX"  # Channel where submissions will be posted
-```
-
-## Docker
-
-`docker-compose up`
-
-Note: update the environment variables in the `docker-compose.yml` file
-
 ## Usage
 
 Use the slash command to trigger with the standup you want to fill
 
-`/standup`
+`/standup <team-name>`
 
 This will open any standup which is added for the user who triggered it
 
