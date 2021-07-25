@@ -105,10 +105,7 @@ def chunk_blocks(blocks: List[Dict], chunk_size: int) -> Iterator[List[Dict[str,
 # Handle after standup submission process
 def after_submission(submission: Submission, is_edit: bool = False) -> None:
     now = datetime.now().time()
-
-    publish_time = datetime.strptime(
-        os.environ.get("STANDUP_PUBLISH_TIME", "13:00"), "%H:%M"
-    ).time()
+    publish_time = submission.user.team[0].standup.publish_time
 
     blocks = build_standup([submission], True)
     if now > publish_time:
