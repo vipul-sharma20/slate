@@ -98,7 +98,7 @@ APP_CONTEXT_SECTION = {
     "elements": [
         {
             "type": "mrkdwn",
-            "text": "For feature requests, issues etc. please add them in the <https://github.com/vipul-sharma20/slack-standup|issue tracker>."
+            "text": "For feature requests, issues etc. please add them in the <https://github.com/vipul-sharma20/slack-standup/issues|issue tracker>."
         }
     ]
 }
