@@ -10,7 +10,7 @@ from flask import request, jsonify
 from sqlalchemy import and_
 
 from app import app_cache, client
-from app.models import Submission, PostSubmitActionEnum, User, Standup
+from app.models import Submission, PostSubmitActionEnum, User, Standup, StandupThread
 from app.constants import (
     STANDUP_INFO_SECTION,
     STANDUP_SECTION_DIVIDER,
@@ -110,8 +110,17 @@ def after_submission(submission: Submission, is_edit: bool = False) -> None:
 
     blocks = build_standup([submission], True)
     if now > publish_time:
+        todays_datetime = datetime(
+            datetime.today().year, datetime.today().month, datetime.today().day
+        )
+        thread = StandupThread.query.filter(
+            and_(
+                StandupThread.standup == submission.standup,
+                StandupThread.created_at >= todays_datetime,
+            )).first()
         client.chat_postMessage(
             channel=submission.user.team[0].standup.publish_channel,
+            thread_ts=thread.thread_id,
             blocks=blocks,
         )
 

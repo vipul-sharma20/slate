@@ -88,6 +88,17 @@ class Standup(db.Model):
                 setattr(self, key, value)
 
 
+class StandupThread(db.Model):
+    __tablename__ = "standupthread"
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    standup_id = Column(Integer, ForeignKey('standup.id'))
+    standup = relationship("Standup")
+    thread_id = Column(String(70), unique=True)
+    created_at = Column(db.DateTime, default=datetime.utcnow, nullable=True)
+
+
 class Auth(db.Model):
     __tablename__ = "auth"
     __table_args__ = {'extend_existing': True}

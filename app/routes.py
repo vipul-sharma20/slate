@@ -9,7 +9,7 @@ from sqlalchemy import and_
 
 import app.utils as utils
 from app import client, signature_verifier
-from app.models import Submission, Standup, User, Team, db
+from app.models import Submission, Standup, User, Team, StandupThread, db
 from app.utils import authenticate
 from app.constants import (
     ALL,
@@ -167,6 +167,12 @@ def publish_standup(team_name):
             text="Standup complete",
             blocks=[STANDUP_INFO_SECTION],
         )
+
+        standup_thread = StandupThread(standup=standup,
+                                       standup_id=standup.id,
+                                       thread_id=message_response.get("ts"))
+        db.session.add(standup_thread)
+        db.session.commit()
 
         blocks_chunk = utils.chunk_blocks(utils.build_standup(submissions, True),
                                           BLOCK_SIZE)
