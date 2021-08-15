@@ -152,11 +152,13 @@ def publish_standup(team_name):
             .join(Team.user)
             .filter(Team.id == team.id, User.is_active)
         )
+
+        standup = Standup.query.filter(Standup.trigger == team_name).first()
         submissions = Submission.query.filter(
             and_(
                 Submission.created_at >= todays_datetime,
                 Submission.user_id.in_([user.id for user in users]),
-                Submission.standup.team == team,
+                Submission.standup == standup,
             )
         )
 
