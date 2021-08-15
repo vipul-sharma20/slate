@@ -63,14 +63,15 @@ def standup_trigger():
         # in the case of slash command trigger.
         standup = team.standup
 
-        if submission := utils.submission_exists(user):
+        if submission := utils.submission_exists(user, standup):
             client.views_open(
                 trigger_id=data.get("trigger_id"),
                 view=utils.create_edit_view(standup, submission)
             )
 
         client.views_open(
-            trigger_id=data.get("trigger_id"), view=standup.standup_blocks
+            trigger_id=data.get("trigger_id"),
+            view=utils.get_standup_view(standup)
         )
         return make_response("", 200)
     except SlackApiError as e:
@@ -102,22 +103,26 @@ def standup_modal():
 
     if payload and utils.is_submission_eligible(payload):
         user_payload = payload.get("user", {})
+        callback_id = payload.get("view", {}).get("callback_id", "")
 
         user = User.query.filter_by(user_id=user_payload.get("id")).first()
+        standup = Standup.query.filter(Standup.trigger == callback_id).first()
 
         todays_datetime = datetime(
             datetime.today().year, datetime.today().month, datetime.today().day
         )
 
         is_edit = False
-        if submission := utils.submission_exists(user):
+        if submission := utils.submission_exists(user, standup):
             client.chat_postMessage(channel=user.user_id,
                                     text=SUBMISSION_UPDATED_MESSAGE)
             submission.standup_submission = standup_submission
             is_edit = True
         else:
             submission = Submission(user_id=user.id,
-                                    standup_submission=standup_submission)
+                                    standup_submission=standup_submission,
+                                    standup_id=standup.id,
+                                    standup=standup)
 
         db.session.add(submission)
         db.session.commit()
@@ -150,7 +155,8 @@ def publish_standup(team_name):
         submissions = Submission.query.filter(
             and_(
                 Submission.created_at >= todays_datetime,
-                Submission.user_id.in_([user.id for user in users])
+                Submission.user_id.in_([user.id for user in users]),
+                Submission.standup.team == team,
             )
         )
 

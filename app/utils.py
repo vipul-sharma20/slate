@@ -121,9 +121,19 @@ def after_submission(submission: Submission, is_edit: bool = False) -> None:
             blocks=[SUBMIT_TEMPLATE_SECTION_1] +
             add_optional_block(submission.user.post_submit_action)
         )
+
+    # TODO: Add edit options for people in multiple teams. This ensures no
+    # edits right now because button click events are not designed to handle
+    # different scenarios
+    if len(submission.user.team) > 1:
+        blocks = [SUBMIT_TEMPLATE_SECTION_3] + blocks + [APP_CONTEXT_SECTION]
+    else:
+        blocks = [SUBMIT_TEMPLATE_SECTION_3] + blocks + \
+            [EDIT_DIALOG_SECTION] + [APP_CONTEXT_SECTION]
+
     client.chat_postMessage(
         channel=submission.user.user_id,
-        blocks=[SUBMIT_TEMPLATE_SECTION_3] + blocks + [EDIT_DIALOG_SECTION] + [APP_CONTEXT_SECTION],
+        blocks=blocks,
     )
 
 
@@ -355,14 +365,17 @@ def is_get_submission_valid(**params: Dict[str, Any]) -> bool:
 
 
 # Check if submission exists for a user for current day
-def submission_exists(user: User) -> Submission:
+def submission_exists(user: User, standup: Standup) -> Submission:
+    print(standup.trigger)
     todays_datetime = datetime(
         datetime.today().year, datetime.today().month, datetime.today().day
     )
 
     return Submission.query.filter(
         and_(Submission.user_id == user.id,
-             Submission.created_at >= todays_datetime)).first()
+             Submission.created_at >= todays_datetime,
+             Submission.standup == standup,
+             )).first()
 
 
 # Create block kit filled with existing responses for standup
@@ -388,5 +401,16 @@ def create_edit_view(standup: Standup, submission: Submission) -> str:
             block["element"]["initial_value"] = submission_text_list[idx]
         filled_blocks.append(block)
     standup_blocks["blocks"] = filled_blocks
+    standup_blocks["callback_id"] = standup.trigger
+
+    return json.dumps(standup_blocks)
+
+
+# Create block kit view for standup
+def get_standup_view(standup: Standup) -> str:
+    standup_str = standup.standup_blocks
+
+    standup_blocks = json.loads(standup_str)
+    standup_blocks["callback_id"] = standup.trigger
 
     return json.dumps(standup_blocks)
