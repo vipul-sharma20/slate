@@ -10,7 +10,8 @@ from flask import request, jsonify
 from sqlalchemy import and_
 
 from app import app_cache, client
-from app.models import Submission, PostSubmitActionEnum, User, Standup, StandupThread
+from app.models import Submission, PostSubmitActionEnum, User, Standup, \
+    StandupThread, Team, db
 from app.constants import (
     STANDUP_INFO_SECTION,
     STANDUP_SECTION_DIVIDER,
@@ -118,11 +119,15 @@ def after_submission(submission: Submission, is_edit: bool = False) -> None:
                 StandupThread.standup == submission.standup,
                 StandupThread.created_at >= todays_datetime,
             )).first()
+
+        channel = submission.user.team[0].standup.publish_channel
         client.chat_postMessage(
-            channel=submission.user.team[0].standup.publish_channel,
+            channel=channel,
             thread_ts=thread.thread_id,
             blocks=blocks,
         )
+        update_users_left_info(channel, thread.thread_id,
+                               submission.standup.team.id)
 
     if not is_edit:
         client.chat_postMessage(
@@ -423,3 +428,31 @@ def get_standup_view(standup: Standup) -> str:
     standup_blocks["callback_id"] = standup.trigger
 
     return json.dumps(standup_blocks)
+
+
+# Get section to show users left for submission
+def users_left_section(users: List[str]) -> List[Dict[str, Any]]:
+    return [{
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": f"Didn't hear from: {', '.join(users)}"
+            }
+        ]
+    }]
+
+
+# Update users left message
+def update_users_left_info(channel: str, thread_id: str, team_id: int) -> None:
+    # Get all active users for this team
+    users = (
+        db.session.query(User)
+        .join(Team.user)
+        .filter(Team.id == team_id, User.is_active)
+    )
+
+    no_submission_users = post_publish_stat(users)
+    client.chat_update(channel=channel,
+                       ts=thread_id,
+                       blocks=[STANDUP_INFO_SECTION] + users_left_section(no_submission_users))

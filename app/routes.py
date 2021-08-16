@@ -16,8 +16,6 @@ from app.constants import (
     ACTIVE,
     INACTIVE,
     NO_USER_ERROR_MESSAGE,
-    POST_PUBLISH_STATS,
-    NO_USER_SUBMIT_MESSAGE,
     BUTTON_TRIGGER,
     SLASH_COMMAND_TRIGGER,
     BLOCK_SIZE,
@@ -162,10 +160,11 @@ def publish_standup(team_name):
             )
         )
 
+        no_submission_users = utils.post_publish_stat(users)
         message_response = client.chat_postMessage(
             channel=team.standup.publish_channel,
             text="Standup complete",
-            blocks=[STANDUP_INFO_SECTION],
+            blocks=[STANDUP_INFO_SECTION] + utils.users_left_section(no_submission_users),
         )
 
         standup_thread = StandupThread(standup=standup,
