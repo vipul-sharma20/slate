@@ -26,9 +26,9 @@ from app.constants import (
 
 # Callback for entrypoint trigger on Slack (slash command etc.)
 @app.route("/slack/standup-trigger/", methods=["POST", "GET"])
-def standup_trigger():
-    if request.method == "GET":
-        data = json.loads(request.args["messages"])
+def standup_trigger(payload: str = ""):
+    if payload:
+        data = json.loads(payload)
         user_id = data.get("user", {}).get("id")
         action_type = BUTTON_TRIGGER
     else:
@@ -95,9 +95,7 @@ def standup_modal():
 
     # Triggered by action button click. Redirect to open standup form.
     if payload.get("type") == "block_actions":
-        return redirect(
-            url_for("standup_trigger", messages=request.form.get("payload"))
-        )
+        return standup_trigger(request.form.get("payload"))
 
     if payload and utils.is_submission_eligible(payload):
         user_payload = payload.get("user", {})
