@@ -107,7 +107,7 @@ def chunk_blocks(blocks: List[Dict], chunk_size: int) -> Iterator[List[Dict[str,
 # Handle after standup submission process
 def after_submission(submission: Submission, is_edit: bool = False) -> None:
     now = datetime.now().time()
-    publish_time = submission.user.team[0].standup.publish_time
+    publish_time = submission.standup.publish_time
 
     blocks = build_standup([submission], True)
     if now > publish_time:
@@ -120,7 +120,7 @@ def after_submission(submission: Submission, is_edit: bool = False) -> None:
                 StandupThread.created_at >= todays_datetime,
             )).first()
 
-        channel = submission.user.team[0].standup.publish_channel
+        channel = submission.standup.publish_channel
         client.chat_postMessage(
             channel=channel,
             thread_ts=thread.thread_id,
@@ -177,11 +177,6 @@ def add_optional_block(post_submit_action: PostSubmitActionEnum) -> List[Dict[st
         pass
 
     return blocks
-
-
-# Send direct text message
-def send_direct_message(user_id: str, text: str) -> None:
-    client.chat_postMessage(channel=user_id, text=text)
 
 
 # Check if new submission is eligible
@@ -261,7 +256,7 @@ def questions_to_blockkit(questions: List[str]) -> Dict[str, Any]:
         "close": {"type": "plain_text", "text": "Cancel", "emoji": True},
         "blocks": [],
     }
-    blockkit_form.append(STANDUP_HELP_SECTION)
+    blockkit_form["blocks"].append(STANDUP_HELP_SECTION)
 
     for question in questions:
         block_template = {
@@ -348,6 +343,7 @@ def prepare_notification_message(user: User) -> Tuple[str, List[Any]]:
     else:
         blocks = NOTIFICATION_BLOCKS[:]
         team_name = user.team[0].name
+        blocks[1]["block_id"] = f"open_standup-{team_name}"
 
         text += f"\nYou can click on the button below or use command: `/standup {team_name}`"
 
@@ -392,40 +388,12 @@ def submission_exists(user: User, standup: Standup) -> Submission:
              )).first()
 
 
-# Create block kit filled with existing responses for standup
-def create_edit_view(standup: Standup, submission: Submission) -> str:
-    standup_json = json.loads(submission.standup_submission)
-    submission_text_list: List = []
-
-    # Create list of existing responses
-    blocks = standup_json.get("blocks", [])
-    for block in blocks:
-        block_id = block.get("block_id", "")
-        action_id = block.get("element", {}).get("action_id", "")
-
-        values = standup_json.get("state", {}).get("values", {})
-        submission_text_list.append(values.get(
-            block_id, {}).get(action_id, {}).get("value", ""))
-
-    # Create edit view filled with responses
-    standup_blocks = json.loads(standup.standup_blocks)
-    filled_blocks: List = []
-    for idx, block in enumerate(standup_blocks.get("blocks", [])):
-        if block["type"] == "input":
-            block["element"]["initial_value"] = submission_text_list[idx]
-        filled_blocks.append(block)
-    standup_blocks["blocks"] = filled_blocks
-    standup_blocks["callback_id"] = standup.trigger
-
-    return json.dumps(standup_blocks)
-
-
 # Create block kit view for standup
 def get_standup_view(standup: Standup) -> str:
     standup_str = standup.standup_blocks
 
     standup_blocks = json.loads(standup_str)
-    standup_blocks["callback_id"] = standup.trigger
+    standup_blocks["callback_id"] = f"submit_standup-{standup.trigger}"
 
     return json.dumps(standup_blocks)
 

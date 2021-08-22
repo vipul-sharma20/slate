@@ -50,6 +50,7 @@ NOTIFICATION_BLOCKS = [
     },
     {
         "type": "actions",
+        "block_id": "open_standup",
         "elements": [
             {
                 "type": "button",
@@ -99,6 +100,111 @@ APP_CONTEXT_SECTION = {
         {
             "type": "mrkdwn",
             "text": "For feature requests, issues etc. please add them in the <https://github.com/vipul-sharma20/slack-standup/issues|issue tracker>."
+        }
+    ]
+}
+
+
+CONFIGURE_VIEW = {
+    "type": "modal",
+    "callback_id": "configure_standup",
+    "submit": {
+            "type": "plain_text",
+        "text": "Submit",
+                "emoji": True
+    },
+    "close": {
+        "type": "plain_text",
+        "text": "Cancel",
+        "emoji": True
+    },
+    "title": {
+        "type": "plain_text",
+        "text": "Configure Standup",
+        "emoji": True
+    },
+    "blocks": [
+        {
+            "type": "divider"
+        },
+        {
+            "type": "input",
+            "element": {
+                "type": "multi_users_select",
+                "action_id": "multi_users_select-action"
+            },
+            "label": {
+                "type": "plain_text",
+                "text": "Users",
+                "emoji": True
+            }
+        },
+        {
+            "type": "input",
+            "element": {
+                    "type": "plain_text_input",
+                    "multiline": True,
+                    "action_id": "plain_text_input-action"
+            },
+            "label": {
+                "type": "plain_text",
+                "text": "Standup questions",
+                "emoji": True
+            }
+        },
+        {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": "Questions are new line separated"
+                }
+            ]
+        },
+        {"type": "divider"},
+        {
+            "type": "section",
+            "block_id": "channels_select",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Pick a channel to publish submissions to from the dropdown list"
+            },
+            "accessory": {
+                "type": "channels_select",
+                "action_id": "channels_select",
+                "placeholder": {
+                    "type": "plain_text",
+                    "text": "Select an item"
+                }
+            }
+        },
+        {"type": "divider"},
+        {
+            "type": "section",
+            "block_id": "timepicker_select",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Pick the time you want submissions to be published"
+            },
+            "accessory": {
+                "type": "timepicker",
+                "initial_time": "13:00",
+                "placeholder": {
+                    "type": "plain_text",
+                    "text": "Select time",
+                    "emoji": True
+                },
+                "action_id": "timepicker_action"
+            }
+        },
+        {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": "Time in UTC"
+                }
+            ]
         }
     ]
 }

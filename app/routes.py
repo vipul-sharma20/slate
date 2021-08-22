@@ -1,13 +1,13 @@
-import os
 import json
 from datetime import datetime
 
-from flask import request, make_response, jsonify, redirect, url_for
+from flask import request, make_response, jsonify
 from flask import current_app as app
 from slack_sdk.errors import SlackApiError
 from sqlalchemy import and_
 
 import app.utils as utils
+import app.handlers as handlers
 from app import client, signature_verifier
 from app.models import Submission, Standup, User, Team, StandupThread, db
 from app.utils import authenticate
@@ -15,73 +15,31 @@ from app.constants import (
     ALL,
     ACTIVE,
     INACTIVE,
-    NO_USER_ERROR_MESSAGE,
     BUTTON_TRIGGER,
     SLASH_COMMAND_TRIGGER,
     BLOCK_SIZE,
-    SUBMISSION_UPDATED_MESSAGE,
-    STANDUP_INFO_SECTION
+    STANDUP_INFO_SECTION,
+    POST_PUBLISH_STATS,
+    NO_USER_SUBMIT_MESSAGE,
 )
 
 
 # Callback for entrypoint trigger on Slack (slash command etc.)
 @app.route("/slack/standup-trigger/", methods=["POST", "GET"])
 def standup_trigger(payload: str = ""):
-    if payload:
-        data = json.loads(payload)
-        user_id = data.get("user", {}).get("id")
-        action_type = BUTTON_TRIGGER
-    else:
-        if not signature_verifier.is_valid_request(request.get_data(), request.headers):
-            return make_response("invalid request", 403)
+    if not signature_verifier.is_valid_request(request.get_data(), request.headers):
+        return make_response("invalid request", 403)
 
-        data = request.form
-        user_id = data.get("user_id")
-        action_type = SLASH_COMMAND_TRIGGER
+    data = request.form
 
-    try:
-        user = User.query.filter_by(user_id=user_id).first()
-        if action_type == BUTTON_TRIGGER:
-            team = (
-                db.session.query(Team)
-                .join(User.team)
-                .filter(User.id == user.id)
-                .first()
-            )
-        else:
-            team_name = data.get("text")
-            if not team_name:
-                return make_response(
-                    f"Slash command format is `/standup <team-name>`.\nYour commands: {', '.join(utils.get_user_slash_commands(user))}",
-                    200,
-                )
-            team = Team.query.filter_by(name=team_name).first()
-
-        # TODO: Check if this user it allowed in this team's standup especially
-        # in the case of slash command trigger.
-        standup = team.standup
-
-        if submission := utils.submission_exists(user, standup):
-            client.views_open(
-                trigger_id=data.get("trigger_id"),
-                view=utils.create_edit_view(standup, submission)
-            )
-
-        client.views_open(
-            trigger_id=data.get("trigger_id"),
-            view=utils.get_standup_view(standup)
-        )
-        return make_response("", 200)
-    except SlackApiError as e:
-        code = e.response["error"]
-        return make_response(f"Failed to open a modal due to {code}", 200)
-    except AttributeError:
-        return make_response(
-            f"No user details or standup exists for this request.\n{NO_USER_ERROR_MESSAGE}",
-            200,
-        )
-
-    return make_response("invalid request", 403)
+    handler_map = {
+        "configure": handlers.open_configure_view,
+    }
+    command = data.get("text").split(" ")[0]
+    view = handler_map.get(command, handlers.open_standup_view)
+    return view(user_id=data.get("user_id"),
+                data=data,
+                trigger_type=SLASH_COMMAND_TRIGGER)
 
 
 # Callback for form submission on Slack
@@ -91,39 +49,25 @@ def standup_modal():
         return make_response("invalid request", 403)
 
     payload = json.loads(request.form.get("payload"))
-    standup_submission = json.dumps(payload.get("view"))
+
+    handler_map = {
+        "open_standup": handlers.open_standup_view,
+        "configure_standup": handlers.configure_standup_handler,
+        "submit_standup": handlers.submit_standup_handler,
+    }
 
     # Triggered by action button click. Redirect to open standup form.
     if payload.get("type") == "block_actions":
-        return standup_trigger(request.form.get("payload"))
+        block_id, team_name = payload.get("actions", [{}])[0].get("block_id", "").split("-")
+        handler_func = handler_map.get(block_id, utils.open_standup_view)
+        handler_func(user_id=payload["user"]["id"],
+                     data=payload,
+                     trigger_type=BUTTON_TRIGGER)
 
-    if payload and utils.is_submission_eligible(payload):
-        user_payload = payload.get("user", {})
-        callback_id = payload.get("view", {}).get("callback_id", "")
-
-        user = User.query.filter_by(user_id=user_payload.get("id")).first()
-        standup = Standup.query.filter(Standup.trigger == callback_id).first()
-
-        todays_datetime = datetime(
-            datetime.today().year, datetime.today().month, datetime.today().day
-        )
-
-        is_edit = False
-        if submission := utils.submission_exists(user, standup):
-            client.chat_postMessage(channel=user.user_id,
-                                    text=SUBMISSION_UPDATED_MESSAGE)
-            submission.standup_submission = standup_submission
-            is_edit = True
-        else:
-            submission = Submission(user_id=user.id,
-                                    standup_submission=standup_submission,
-                                    standup_id=standup.id,
-                                    standup=standup)
-
-        db.session.add(submission)
-        db.session.commit()
-
-    utils.after_submission(submission, is_edit)
+    elif payload.get("type") == "view_submission":
+        callback_id, team_name = payload.get("view", {}).get("callback_id", "").split("-")
+        handler_func = handler_map.get(callback_id, handlers.submit_standup_handler)
+        handler_func(data=payload)
 
     return make_response("", 200)
 
