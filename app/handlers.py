@@ -1,7 +1,8 @@
 import json
-from datetime import datetime
+from datetime import datetime, time
 
 from slack_sdk.errors import SlackApiError
+from flask import make_response
 
 import app.utils as utils
 import app.constants as constants
@@ -77,7 +78,7 @@ def configure_standup_handler(**kwargs):
     for user_id in add_user_list:
         user = User.query.filter_by(user_id=user_id).first()
         if not user:
-            User(user_id=user, is_active=True, team=[team])
+            user = User(user_id=user_id, is_active=True, team=[team])
         else:
             if team not in user.team:
                 user.team.append(team)
@@ -189,10 +190,8 @@ def open_configure_view(**kwargs):
 
     config_blocks["callback_id"] = f"configure_standup-{team_name}"
 
-    return client.views_open(
-                trigger_id=data.get("trigger_id"),
-                view=config_blocks
-            )
+    client.views_open(trigger_id=data.get("trigger_id"),
+                      view=config_blocks)
 
 
 # Open standup view for a user
@@ -214,10 +213,8 @@ def open_standup_view(**kwargs):
             team_name = data.get("text")
             print(team_name)
             if not team_name:
-                return make_response(
-                    f"Slash command format is `/standup <team-name>`.\nYour commands: {', '.join(utils.get_user_slash_commands(user))}",
-                    200,
-                )
+                message = f"Slash command format is `/standup <team-name>`.\nYour commands: {', '.join(utils.get_user_slash_commands(user))}"
+                client.chat_postMessage(channel=user.user_id, text=message)
             team = Team.query.filter_by(name=team_name).first()
 
         # TODO: Check if this user it allowed in this team's standup especially
@@ -240,7 +237,7 @@ def open_standup_view(**kwargs):
         return make_response(f"Failed to open a modal due to {code}", 200)
     except AttributeError:
         return make_response(
-            f"No user details or standup exists for this request.\n{NO_USER_ERROR_MESSAGE}",
+            f"No user details or standup exists for this request.\n{constants.NO_USER_ERROR_MESSAGE}",
             200,
         )
 
