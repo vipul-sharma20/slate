@@ -37,9 +37,11 @@ def standup_trigger(payload: str = ""):
     }
     command = data.get("text").split(" ")[0]
     view = handler_map.get(command, handlers.open_standup_view)
-    return view(user_id=data.get("user_id"),
-                data=data,
-                trigger_type=SLASH_COMMAND_TRIGGER)
+    view(user_id=data.get("user_id"),
+         data=data,
+         trigger_type=SLASH_COMMAND_TRIGGER)
+
+    return make_response("", 200)
 
 
 # Callback for form submission on Slack
