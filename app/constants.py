@@ -167,7 +167,7 @@ CONFIGURE_VIEW = {
             "block_id": "channels_select",
             "text": {
                 "type": "mrkdwn",
-                "text": "Pick a channel to publish submissions to from the dropdown list"
+                "text": "Channel where submissions will be published"
             },
             "accessory": {
                 "type": "channels_select",
@@ -184,7 +184,7 @@ CONFIGURE_VIEW = {
             "block_id": "timepicker_select",
             "text": {
                 "type": "mrkdwn",
-                "text": "Pick the time you want submissions to be published"
+                "text": "Time when submissions will be published"
             },
             "accessory": {
                 "type": "timepicker",
