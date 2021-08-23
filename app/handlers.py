@@ -13,7 +13,7 @@ from app import client
 # Handler for new/existing standup configuration
 def configure_standup_handler(**kwargs):
     payload = kwargs.get("data", {})
-    _, team_name = payload.get("view", {}).get("callback_id", "").split("-")
+    _, team_name = payload.get("view", {}).get("callback_id", "").split("%")
     blocks = payload["view"]["blocks"]
     submit_list = []
 
@@ -89,7 +89,7 @@ def configure_standup_handler(**kwargs):
     # Create or update standup
     questions = questions.split("\n")
     blockkit_form = utils.questions_to_blockkit(questions)
-    blockkit_form["callback_id"] = f"submit_standup-{team_name}"
+    blockkit_form["callback_id"] = f"submit_standup%{team_name}"
 
     standup = Standup.query.filter(Standup.trigger == team_name).first()
     if not standup:
@@ -118,7 +118,7 @@ def submit_standup_handler(**kwargs):
 
     if payload and utils.is_submission_eligible(payload):
         user_payload = payload.get("user", {})
-        _, team_name = payload.get("view", {}).get("callback_id", "").split("-")
+        _, team_name = payload.get("view", {}).get("callback_id", "").split("%")
 
         user = User.query.filter_by(user_id=user_payload.get("id")).first()
         standup = Standup.query.filter(Standup.trigger == team_name).first()
@@ -188,7 +188,7 @@ def open_configure_view(**kwargs):
         channel_block["accessory"]["initial_channel"] = team.standup.publish_channel
         publish_time_block["accessory"]["initial_time"] = time.strftime(team.standup.publish_time, "%H:%M")
 
-    config_blocks["callback_id"] = f"configure_standup-{team_name}"
+    config_blocks["callback_id"] = f"configure_standup%{team_name}"
 
     client.views_open(trigger_id=data.get("trigger_id"),
                       view=config_blocks)
@@ -265,6 +265,6 @@ def open_edit_view(standup: Standup, submission: Submission) -> str:
             block["element"]["initial_value"] = submission_text_list[idx]
         filled_blocks.append(block)
     standup_blocks["blocks"] = filled_blocks
-    standup_blocks["callback_id"] = f"submit_standup-{standup.trigger}"
+    standup_blocks["callback_id"] = f"submit_standup%{standup.trigger}"
 
     return json.dumps(standup_blocks)

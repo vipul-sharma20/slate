@@ -343,7 +343,7 @@ def prepare_notification_message(user: User) -> Tuple[str, List[Any]]:
     else:
         blocks = NOTIFICATION_BLOCKS[:]
         team_name = user.team[0].name
-        blocks[1]["block_id"] = f"open_standup-{team_name}"
+        blocks[1]["block_id"] = f"open_standup%{team_name}"
 
         text += f"\nYou can click on the button below or use command: `/standup {team_name}`"
 
@@ -393,7 +393,7 @@ def get_standup_view(standup: Standup) -> str:
     standup_str = standup.standup_blocks
 
     standup_blocks = json.loads(standup_str)
-    standup_blocks["callback_id"] = f"submit_standup-{standup.trigger}"
+    standup_blocks["callback_id"] = f"submit_standup%{standup.trigger}"
 
     return json.dumps(standup_blocks)
 
