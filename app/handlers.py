@@ -63,7 +63,7 @@ def configure_standup_handler(**kwargs):
     # Users to remove
     remove_user_list = set(user_ids) - set(user_list)
     for user_id in remove_user_list:
-        user = User.query.filter_by(user_id=user_id)
+        user = User.query.filter_by(user_id=user_id).first()
         teams = []
         for team in user.team:
             if team.name != team_name:
