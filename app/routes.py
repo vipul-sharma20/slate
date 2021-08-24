@@ -61,7 +61,7 @@ def standup_modal():
     # Triggered by action button click. Redirect to open standup form.
     if payload.get("type") == "block_actions":
         block_id, team_name = payload.get("actions", [{}])[0].get("block_id", "").split("%")
-        handler_func = handler_map.get(block_id, utils.open_standup_view)
+        handler_func = handler_map.get(block_id, handlers.open_standup_view)
         handler_func(user_id=payload["user"]["id"],
                      data=payload,
                      trigger_type=BUTTON_TRIGGER)
