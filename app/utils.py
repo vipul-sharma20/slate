@@ -142,6 +142,8 @@ def after_submission(submission: Submission, is_edit: bool = False) -> None:
     if len(submission.user.team) > 1:
         blocks = [SUBMIT_TEMPLATE_SECTION_3] + blocks + [APP_CONTEXT_SECTION]
     else:
+        edit_dialog = dict(EDIT_DIALOG_SECTION)
+        edit_dialog["block_id"] = f"open_dialog%{submission.standup.trigger}"
         blocks = [SUBMIT_TEMPLATE_SECTION_3] + blocks + \
             [EDIT_DIALOG_SECTION] + [APP_CONTEXT_SECTION]
 
