@@ -1,4 +1,4 @@
-app: standup-bot
+app: slack-standup
 namespace: default
 replicas: 1
 
