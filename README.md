@@ -16,6 +16,8 @@ Check usage and API further in the README.
 
 ## Deployment
 
+### Docker
+
 ```
 docker-compose up
 ```
@@ -23,6 +25,10 @@ docker-compose up
 Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slack-standup
 
 Make sure to update the following environment variables in [`docker-compose.yml`](./docker-compose.yml)
+
+### Helm
+
+Helm chart in [`./charts`](./charts) directory.
 
 #### Slack tokens
 
