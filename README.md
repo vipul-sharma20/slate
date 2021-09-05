@@ -26,10 +26,6 @@ Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slack-stand
 
 Make sure to update the following environment variables in [`docker-compose.yml`](./docker-compose.yml)
 
-### Helm
-
-Helm chart in [`./charts`](./charts) directory.
-
 #### Slack tokens
 
 - `SLACK_SIGNING_SECRET`: Slack signing secret
@@ -39,6 +35,10 @@ Helm chart in [`./charts`](./charts) directory.
 
 - `SQLALCHEMY_DATABASE_URI`: URI of the database to use. By default, a Sqlite DB is configured.
 
+
+### Helm
+
+Helm chart in [`./charts`](./charts) directory.
 
 ## Setting up the application on Slack
 
