@@ -1,0 +1,73 @@
+# Publish cron
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: standup-publish
+  namespace: default
+spec:
+  # Time in UTC
+  schedule: "30 7 * * 1-5"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: standup-reminder
+            image: curlimages/curl:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - "curl --location --request GET 'https://host/slack/publish_standup/team/' --header 'Authorization: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'"
+          restartPolicy: OnFailure
+
+---
+
+# Reminder cron
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: standup-reminder
+  namespace: default
+spec:
+  # Time in UTC
+  schedule: "30 5 * * 1-5"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: standup-reminder
+            image: curlimages/curl:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - "curl --location --request GET 'https://host/api/notify_users/team/' --header 'Authorization: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'"
+          restartPolicy: OnFailure
+
+---
+
+# 2nd reminder
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: standup-reminder-1
+  namespace: default
+spec:
+  # Time in UTC
+  schedule: "0 7 * * 1-5"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: standup-reminder-1
+            image: curlimages/curl:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - "curl --location --request GET 'https://host/api/notify_users/team/' --header 'Authorization: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'"
+          restartPolicy: OnFailure
+

@@ -1,0 +1,41 @@
+app: standup-bot
+namespace: default
+replicas: 1
+
+image:
+  repository: vipul20/slack-standup
+  tag: latest
+  pullPolicy: Always
+
+resources:
+  limits:
+    cpu: 256m
+    memory: 256Mi
+  requests:
+    cpu: 10m
+    memory: 200Mi
+
+env:
+  SLACK_SIGNING_SECRET: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  SLACK_API_TOKEN: "xoxb-xxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+  SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@postgresql:5432/standup"
+  FLASK_APP: app
+  ENVIRONMENT: PROD
+    # SQLALCHEMY_DATABASE_URI: "sqlite:////home/slack-standup/db/standup.db"
+
+enableReadinessProbe: false
+readinessProbeInitialDelay: 30
+readinessProbeInterval: 5
+readinessProbeTimeout: 3
+
+enableLivenessProbe: false
+livenessProbeInitialDelay: 20
+livenessProbeInterval: 30
+livenessProbeTimeout: 1
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+volumeMounts: []
+
+serviceType: NodePort

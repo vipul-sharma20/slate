@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.app}}
+  namespace: {{.Values.namespace}}
+  labels:
+    app: {{.Values.app}}
+spec:
+  replicas: {{.Values.replicas}}
+  selector:
+    matchLabels:
+      app: {{.Values.app}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.app}}
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.pullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+      - name: {{.Values.app}}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["uwsgi", "--http", ":9020", "--enable-threads", "--lazy-apps", "--threads", "4", "--module", "app:create_app()", "--workers", "2", "--buffer-size", "32768"]
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        env:
+        {{- range $key, $value := .Values.env }}
+          - name: {{ $key }}
+            value: "{{ $value }}"
+        {{- end }}
+        ports:
+        - containerPort: 9020
+          protocol: TCP
+        {{- if .Values.enableReadinessProbe }}
+        readinessProbe:
+          tcpSocket:
+            port: 9020
+          initialDelaySeconds: {{ .Values.readinessProbeInitialDelay }}
+          periodSeconds: {{ .Values.readinessProbeInterval }}
+          timeoutSeconds: {{ .Values.readinessProbeTimeout }}
+        {{- end }}
+        {{- if .Values.enableLivenessProbe }}
+        livenessProbe:
+          tcpSocket:
+            port: 9020
+          initialDelaySeconds: {{ add .Values.livenessProbeInitialDelay .Values.readinessProbeInitialDelay }}
+          periodSeconds: {{ .Values.livenessProbeInterval }}
+          timeoutSeconds: {{ .Values.livenessProbeTimeout }}
+        {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+  {{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+  {{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+  {{ toYaml . | indent 8 }}
+    {{- end }}
