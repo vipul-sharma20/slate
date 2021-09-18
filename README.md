@@ -1,5 +1,5 @@
 
-<p align="center"><img src="https://i.imgur.com/joR753C.png" width="200px"/></p>
+<p align="center"><img src="https://i.imgur.com/ChfWvOO.png" width="200px"/></p>
 
 <div align="center">Self hosted Slack app for daily standups.</div></br>
 
