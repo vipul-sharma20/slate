@@ -25,7 +25,7 @@ Check usage and API further in the README.
 docker-compose up
 ```
 
-Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slack-standup
+Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slate
 
 Make sure to update the following environment variables in [`docker-compose.yml`](./docker-compose.yml)
 
