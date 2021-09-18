@@ -1,6 +1,9 @@
-# slack-standup
 
-Self hosted Slack app for daily standups.
+<p align="center"><img src="https://i.imgur.com/ndfRgcz.png" width="200px"/></p>
+
+<div align="center">Self hosted Slack app for daily standups.</div>
+
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/vipul-sharma20/slate?style=flat-square)
 
 ## Features
 
