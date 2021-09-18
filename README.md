@@ -1,7 +1,7 @@
 
 <p align="center"><img src="https://i.imgur.com/joR753C.png" width="200px"/></p>
 
-<div align="center">Self hosted Slack app for daily standups.</div>
+<div align="center">Self hosted Slack app for daily standups.</div></br>
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/vipul-sharma20/slate?style=flat-square)
 ![Docker Build](https://github.com/vipul-sharma20/slate/actions/workflows/docker-build.yml/badge.svg)
