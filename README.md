@@ -4,7 +4,7 @@
 <div align="center">Self hosted Slack app for daily standups.</div>
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/vipul-sharma20/slate?style=flat-square)
-![Docker Build](https://github.com/vipul-sharma20/slate/actions/workflows/docker-build.yaml/badge.svg)
+![Docker Build](https://github.com/vipul-sharma20/slate/actions/workflows/docker-build.yml/badge.svg)
 
 ## Features
 
