@@ -1,0 +1,26 @@
+name: docs
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  github-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Build site
+        run: |
+          cd ./docs
+          gem install bundler
+          bundle
+          bundle exec jekyll build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_site
