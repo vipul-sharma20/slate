@@ -42,7 +42,7 @@ def configure_standup_handler(**kwargs):
 
     values = list(filter(lambda x: x != "", submit_list))
     user_list, questions, publish_channel, publish_time = values
-    publish_time = datetime.strptime("13:00", "%H:%M").time()
+    publish_time = datetime.strptime(publish_time, "%H:%M").time()
 
     # Get team
     team = Team.query.filter_by(name=team_name).first()
