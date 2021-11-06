@@ -37,3 +37,10 @@ nav_order: 1
 <h4 align="center">Standup submission dialog box</h4>
 <p align="center"><img src="https://i.imgur.com/mddlZb4.png" width="500px"/></p>
 
+---
+
+<h4 align="center">Standup publish view on channel (individual submissions in thread)</h4>
+<p align="center"><img src="https://i.imgur.com/Evgomr9.png" width="500px"/></p>
+
+
+[slate]: https://github.com/vipul-sharma20/slate
