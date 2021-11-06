@@ -7,7 +7,6 @@ title: Home
 nav_order: 1
 ---
 
-<h1 style="text-align:center">Slate</h1>
 <p align="center"><img src="https://i.imgur.com/ChfWvOO.png" width="200px"/></p>
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/vipul-sharma20/slate?style=flat-square)
