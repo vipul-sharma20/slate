@@ -6,6 +6,7 @@
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/vipul-sharma20/slate?style=flat-square)
 ![Docker Build](https://github.com/vipul-sharma20/slate/actions/workflows/docker-build.yml/badge.svg)
 ![Helm release](https://github.com/vipul-sharma20/slate/actions/workflows/release.yml/badge.svg)
+![License](https://img.shields.io/github/license/vipul-sharma20/slate?style=flat-square)
 
 Documentation [here][documentation].
 

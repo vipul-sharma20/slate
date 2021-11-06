@@ -10,6 +10,11 @@ nav_order: 1
 <p align="center"><img src="https://i.imgur.com/ChfWvOO.png" width="200px"/></p>
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/vipul-sharma20/slate?style=flat-square)
+![Docker Build](https://github.com/vipul-sharma20/slate/actions/workflows/docker-build.yml/badge.svg)
+![Helm release](https://github.com/vipul-sharma20/slate/actions/workflows/release.yml/badge.svg)
+![License](https://img.shields.io/github/license/vipul-sharma20/slate?style=flat-square)
+[![GitHub stars](https://img.shields.io/github/stars/vipul-sharma20/slate.svg?style=social&label=Star&maxAge=2592000)](https://gitHub.com/vipul-sharma20/slate/stargazers/)
+
 
 [Slate][slate], a self hosted Slack app for daily standups.
 
