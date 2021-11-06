@@ -11,7 +11,7 @@ nav_order: 1
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/vipul-sharma20/slate?style=flat-square)
 
-Self hosted Slack app for daily standups.
+[Slate][slate], a self hosted Slack app for daily standups.
 
 ## Features
 
