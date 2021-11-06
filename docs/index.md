@@ -25,17 +25,16 @@ Self hosted Slack app for daily standups.
 
 ## Screenshots
 
-<h3 align="center">Standup configuration dialog box (new/existing)</p>
+<h4 align="center">Standup configuration dialog box (new/existing)</h4>
 <p align="center"><img src="https://i.imgur.com/Nf5c9ba.png" width="500px"/></p>
-<p align="center">Triggered by: <i>/standup configure <b>team-name</b></i></p>
 
 ---
 
-<h3 align="center">Daily user notification for standup submission</p>
+<h4 align="center">Daily user notification for standup submission</h4>
 <p align="center"><img src="https://i.imgur.com/x5Qrb7C.png", width="500px"/></p>
 
 ---
 
-<h3 align="center">Standup submission dialog box</p>
+<h4 align="center">Standup submission dialog box</h4>
 <p align="center"><img src="https://i.imgur.com/mddlZb4.png" width="500px"/></p>
 
