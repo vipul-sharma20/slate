@@ -12,7 +12,7 @@ Deploy on an existing Kubernetes using the helm chart in the repository [here](h
 helm install --name slack-standup . values.yaml
 ```
 
-#### Configuring k8s crons
+### Configuring k8s crons
 
 Apply crons as below
 ```
