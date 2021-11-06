@@ -7,7 +7,7 @@
 ![Docker Build](https://github.com/vipul-sharma20/slate/actions/workflows/docker-build.yml/badge.svg)
 ![Helm release](https://github.com/vipul-sharma20/slate/actions/workflows/release.yml/badge.svg)
 
-Documentation in the [wiki][wiki].
+Documentation [here][documentation].
 
 ## Features
 
@@ -22,4 +22,4 @@ Documentation in the [wiki][wiki].
 
 MIT
 
-[wiki]: https://github.com/vipul-sharma20/slate/wiki
+[documentation]: https://vipul-sharma20.github.io/slate/
