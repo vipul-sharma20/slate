@@ -31,7 +31,7 @@ Self hosted Slack app for daily standups.
 ---
 
 <h4 align="center">Daily user notification for standup submission</h4>
-<p align="center"><img src="https://i.imgur.com/x5Qrb7C.png", width="500px"/></p>
+<p align="center"><img src="https://i.imgur.com/x5Qrb7C.png" width="500px"/></p>
 
 ---
 
