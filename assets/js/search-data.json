@@ -19,7 +19,7 @@
   },"3": {
     "doc": "Docker",
     "title": "Docker",
-    "content": "## Docker ``` docker-compose up ``` Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slack-standup Make sure to update the following environment variables in [`docker-compose.yml`](./docker-compose.yml) #### Slack tokens - `SLACK_SIGNING_SECRET`: Slack signing secret - `SLACK_API_TOKEN`: Bot user oauth token. #### Other application environment variables - `SQLALCHEMY_DATABASE_URI`: URI of the database to use. By default, a Sqlite DB is configured. ",
+    "content": "## Docker ``` docker-compose up ``` Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slack-standup Make sure to update the following environment variables in [`docker-compose.yml`](https://github.com/vipul-sharma20/slate/blob/master/docker-compose.yml) #### Slack tokens - `SLACK_SIGNING_SECRET`: Slack signing secret - `SLACK_API_TOKEN`: Bot user oauth token. #### Other application environment variables - `SQLALCHEMY_DATABASE_URI`: URI of the database to use. By default, a Sqlite DB is configured. ",
     "url": "/slate/deployment/docker.html",
     "relUrl": "/deployment/docker.html"
   },"4": {
@@ -49,7 +49,7 @@
   },"8": {
     "doc": "Manual",
     "title": "Manual",
-    "content": "## Manual Check the [development doc](./development) if you want to manually setup the standup bot or looking for development. ",
+    "content": "## Manual Check the [development doc](/slate/docs/development) if you want to manually setup the standup bot or looking for development. ",
     "url": "/slate/deployment/manual.html",
     "relUrl": "/deployment/manual.html"
   },"9": {
@@ -73,7 +73,7 @@
   },"12": {
     "doc": "Usage",
     "title": "Usage",
-    "content": "# Usage This page explains basic usage pattern of Slate. --- ## Creating new / editing existing standup Use slash command `/standup configure` (or `/ configure` in case you configure a different name when you install the app). This will open a dialog box like below where you can: - Add users you want in this standup. - Set questions for the standup, each line separated. - The channel where the standup submissions should be posted. - The time at which the standup submissions should be posted. This dialog box view looks like the screenshot below. Standup configuration dialog box (new/existing) . --- ## Submitting standup ### Using slash command Use slash command `/standup` (or `/` in case you configure a different name when you install the app) to open up a dialog box where you can submit your standup. ### Using pre-scheduled cron notifications In case you schedule [crons][crons] for notifications, you'll get a Slack notification like below. Daily user notification for standup submission . You can click on \"Open Dialog\" and submit your standup. Screenshot of the dialog box is below. Standup submission dialog box . --- ## Publishing standup ### Using pre-scheduled crons Check the [crons][crons] to setup cron jobs for publishing standups. Published crons on a Slack channel should look like below. Standup publish view on channel (individual submissions in thread) . Individual submission will be as messages in the thread. --- ## Editing standup Once you submit your standup, you get a copy of your submission which you can also edit it by clicking the \"Edit\" button. Your copy of submission looks like below. Submission view in DM . [crons]: ./deployment/crons.html ",
+    "content": "# Usage This page explains basic usage pattern of Slate. --- ## Creating new / editing existing standup Use slash command `/standup configure` (or `/ configure` in case you configure a different name when you install the app). This will open a dialog box like below where you can: - Add users you want in this standup. - Set questions for the standup, each line separated. - The channel where the standup submissions should be posted. - The time at which the standup submissions should be posted. This dialog box view looks like the screenshot below. Standup configuration dialog box (new/existing) . --- ## Submitting standup ### Using slash command Use slash command `/standup ` (or `/ ` in case you configure a different name when you install the app) to open up a dialog box where you can submit your standup. ### Using pre-scheduled cron notifications In case you schedule [crons][crons] for notifications, you'll get a Slack notification like below. Daily user notification for standup submission . You can click on \"Open Dialog\" and submit your standup. Screenshot of the dialog box is below. Standup submission dialog box . --- ## Publishing standup ### Using pre-scheduled crons Check the [crons][crons] to setup cron jobs for publishing standups. Published crons on a Slack channel should look like below. Standup publish view on channel (individual submissions in thread) . Individual submission will be as messages in the thread. --- ## Editing standup Once you submit your standup, you get a copy of your submission which you can also edit it by clicking the \"Edit\" button. Your copy of submission looks like below. Submission view in DM . [crons]: ./deployment/crons.html ",
     "url": "/slate/usage.html",
     "relUrl": "/usage.html"
   }
