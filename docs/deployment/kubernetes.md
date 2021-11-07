@@ -1,7 +1,8 @@
 ---
 layout: default
 title: Kubernetes
-parent: Deployment
+parent: Options
+grand_parent: Deployment
 ---
 
 ## Kubernetes

@@ -42,7 +42,8 @@ flask run --host 0.0.0.0 --port 5000
 
 ## Install on Slack
 
-To test this development deployment, install this to your Slack workspace by following the doc [here](./Installation).
+To test this development deployment, install this to your Slack workspace by
+following the doc [here](./Installation).
 
 You can expose the local server via [ngrok](https://ngrok.com/) for test purposes like below
 ```

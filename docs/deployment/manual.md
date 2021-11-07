@@ -1,10 +1,11 @@
 ---
 layout: default
 title: Manual
-parent: Deployment
+parent: Options
+grand_parent: Deployment
 ---
 
 ## Manual
 
-Check the [development doc](./development) if you want to manually setup the standup bot or looking for development. 
+Check the [development doc](/slate/docs/development) if you want to manually setup the standup bot or looking for development. 
 

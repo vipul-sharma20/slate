@@ -1,7 +1,8 @@
 ---
 layout: default
 title: Docker
-parent: Deployment
+parent: Options
+grand_parent: Deployment
 ---
 
 ## Docker
@@ -12,7 +13,7 @@ docker-compose up
 
 Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slack-standup
 
-Make sure to update the following environment variables in [`docker-compose.yml`](./docker-compose.yml)
+Make sure to update the following environment variables in [`docker-compose.yml`](https://github.com/vipul-sharma20/slate/blob/master/docker-compose.yml)
 
 #### Slack tokens
 

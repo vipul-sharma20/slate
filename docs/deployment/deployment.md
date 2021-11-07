@@ -8,4 +8,3 @@ permalink: docs/deployment
 
 # Deployment
 
-Following are the ways which you can deploy slate for yourself.
