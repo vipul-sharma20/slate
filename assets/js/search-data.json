@@ -1,62 +1,80 @@
 {"0": {
+    "doc": "Crons",
+    "title": "Crons",
+    "content": "Slate provides APIs to notify users, publish standup to Slack etc. One way to schedule these notifications and publishing time is via crons. To publish standup submissions you can use the following approach: - Kubernetes crons (in case you went with K8s based installation). - Calling publish standup API via a cron or manually to publish to Slack channel. ## Kubernetes crons Follow the doc [here][k8s-crons] to setup required crons for Kubernetes cluster deployment. ## Generic crons ### 1. Cron to notify users ```bash 30 7 * * 1-5 curl --location --request GET 'https:///api/notify_users//' --header 'Authorization: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ``` This will set a cron to notify users every Monday to Friday at 7:30 UTC. ### 2. Cron to publish standup submissions ```bash 30 8 * * 1-5 curl --location --request GET 'https:///slack/publish_standup//' --header 'Authorization: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ``` This will publish all the standup submissions every Monday to Friday at 8:30 UTC to the Slack channel configured. [k8s-crons]: ./kubernetes.html#configuring-k8s-crons ",
+    "url": "/slate/deployment/crons.html",
+    "relUrl": "/deployment/crons.html"
+  },"1": {
     "doc": "Deployment",
     "title": "Deployment",
-    "content": "# Deployment Following are the ways which you can deploy slate for yourself. ",
+    "content": "# Deployment ",
     "url": "/slate/docs/deployment",
     "relUrl": "/docs/deployment"
-  },"1": {
+  },"2": {
     "doc": "Development",
     "title": "Development",
     "content": "# Development Follow the steps below to setup this project for development. ## Setup dependencies - This project works on Python3.8+ - Install required packages ``` pip install -r requirements.txt ``` ## Starting development server ### Export essential environment variables - `SLACK_SIGNING_SECRET`: Slack signing secret - `SLACK_API_TOKEN`: Bot user oauth token. - `SQLALCHEMY_DATABASE_URI`: URI of the database to use. By default, a Sqlite DB is configured. - `FLASK_APP=app`: ### DB setup ``` flask db stamp head flask db migrate flask db upgrade ``` ### Start server ``` flask run --host 0.0.0.0 --port 5000 ``` ## Install on Slack To test this development deployment, install this to your Slack workspace by following the doc [here](./Installation). You can expose the local server via [ngrok](https://ngrok.com/) for test purposes like below ``` ngrok http 5000 ``` ",
     "url": "/slate/docs/development",
     "relUrl": "/docs/development"
-  },"2": {
+  },"3": {
     "doc": "Docker",
     "title": "Docker",
     "content": "## Docker ``` docker-compose up ``` Pre-built image at: https://hub.docker.com/repository/docker/vipul20/slack-standup Make sure to update the following environment variables in [`docker-compose.yml`](./docker-compose.yml) #### Slack tokens - `SLACK_SIGNING_SECRET`: Slack signing secret - `SLACK_API_TOKEN`: Bot user oauth token. #### Other application environment variables - `SQLALCHEMY_DATABASE_URI`: URI of the database to use. By default, a Sqlite DB is configured. ",
     "url": "/slate/deployment/docker.html",
     "relUrl": "/deployment/docker.html"
-  },"3": {
+  },"4": {
     "doc": "Home",
     "title": "Home",
     "content": ". ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/vipul-sharma20/slate?style=flat-square) ![Docker Build](https://github.com/vipul-sharma20/slate/actions/workflows/docker-build.yml/badge.svg) ![Helm release](https://github.com/vipul-sharma20/slate/actions/workflows/release.yml/badge.svg) ![License](https://img.shields.io/github/license/vipul-sharma20/slate?style=flat-square) [![GitHub stars](https://img.shields.io/github/stars/vipul-sharma20/slate.svg?style=social&label=Star&maxAge=2592000)](https://gitHub.com/vipul-sharma20/slate/stargazers/) [Slate][slate], a self hosted Slack app for daily standups. ## Features - Create standup submissions using Slack dialog box or slash commands. - Ability to add different standup forms/questions for different teams. - Notify users to submit their standups. - Publish standup responses to a Slack channel. Can configure different Slack channels for different teams. - CRUD APIs to manage standups, submissions, users, teams etc. ## Screenshots Standup configuration dialog box (new/existing) . --- Daily user notification for standup submission . --- Standup submission dialog box . --- Standup publish view on channel (individual submissions in thread) . [slate]: https://github.com/vipul-sharma20/slate ",
     "url": "/slate/",
     "relUrl": "/"
-  },"4": {
+  },"5": {
     "doc": "Installation",
     "title": "Installation",
     "content": "# Installation You can setup the Slack app using the app manifest (the easier way) or manually. ",
     "url": "/slate/docs/installation",
     "relUrl": "/docs/installation"
-  },"5": {
+  },"6": {
     "doc": "Kubernetes",
     "title": "Kubernetes",
     "content": "## Kubernetes Deploy on an existing Kubernetes using the helm chart in the repository [here](https://github.com/vipul-sharma20/slate/tree/master/charts) like below. ``` helm install --name slack-standup . values.yaml ``` ### Configuring k8s crons Apply crons as below ``` kubectl apply -f crons/crons.yaml ``` These are crons for reminding teams for standup submissions and publishing submissions on a Slack channel. Please edit commands, cron trigger time etc. in `crons.yaml` before applying. ",
     "url": "/slate/deployment/kubernetes.html",
     "relUrl": "/deployment/kubernetes.html"
-  },"6": {
+  },"7": {
     "doc": "App Manifest",
     "title": "App Manifest",
     "content": "# Using app manifest Create a new app on Slack and import the [`app_manifest.yml`](./app_manifest.yml) configuration. Make sure to update the following configs: - `url`: update host and port with the your deployment - `request_url`: update host and port with the your deployment Change any other information based on your preference for eg: slash commands etc. ",
     "url": "/slate/installation/manifest.html",
     "relUrl": "/installation/manifest.html"
-  },"7": {
+  },"8": {
     "doc": "Manual",
     "title": "Manual",
     "content": "## Manual Check the [development doc](./development) if you want to manually setup the standup bot or looking for development. ",
     "url": "/slate/deployment/manual.html",
     "relUrl": "/deployment/manual.html"
-  },"8": {
+  },"9": {
     "doc": "Manual",
     "title": "Manual",
     "content": "## Manual - Create an app on Slack, for example: `slack-standup`. - Create Slack bot token (check \"OAuth & Permissions\" in your app page) and add it as environment variable in [`docker-compose.yml`](./docker-compose.yml). - Add following scopes: `channels:history`, `chat:write`, `commands`, `users:read`. - Deploy the application with the tokens. - Under \"Interactivity & Shortcuts\" option, add request URL as `host:port/slack/submit_standup/` - Add a slash command using the \"Slash Commands\" option. - Use request URL as `host:port/slack/standup-trigger/` - Add the Slack app in your channel (Example: `/invite @slack-doc`). ",
     "url": "/slate/installation/manual.html",
     "relUrl": "/installation/manual.html"
-  },"9": {
+  },"10": {
+    "doc": "Options",
+    "title": "Options",
+    "content": "# Deployment Options Following are the ways which you can deploy slate for yourself. You can choose either of them as per your convenience. ",
+    "url": "/slate/deployment/options.html",
+    "relUrl": "/deployment/options.html"
+  },"11": {
     "doc": "Roadmap",
     "title": "Roadmap",
     "content": "# Roadmap ... ",
     "url": "/slate/roadmap.html",
     "relUrl": "/roadmap.html"
+  },"12": {
+    "doc": "Usage",
+    "title": "Usage",
+    "content": "# Usage This page explains basic usage pattern of Slate. --- ## Creating new / editing existing standup Use slash command `/standup configure` (or `/ configure` in case you configure a different name when you install the app). This will open a dialog box like below where you can: - Add users you want in this standup. - Set questions for the standup, each line separated. - The channel where the standup submissions should be posted. - The time at which the standup submissions should be posted. This dialog box view looks like the screenshot below. Standup configuration dialog box (new/existing) . --- ## Submitting standup ### Using slash command Use slash command `/standup` (or `/` in case you configure a different name when you install the app) to open up a dialog box where you can submit your standup. ### Using pre-scheduled cron notifications In case you schedule [crons][crons] for notifications, you'll get a Slack notification like below. Daily user notification for standup submission . You can click on \"Open Dialog\" and submit your standup. Screenshot of the dialog box is below. Standup submission dialog box . --- ## Publishing standup ### Using pre-scheduled crons Check the [crons][crons] to setup cron jobs for publishing standups. Published crons on a Slack channel should look like below. Standup publish view on channel (individual submissions in thread) . Individual submission will be as messages in the thread. --- ## Editing standup Once you submit your standup, you get a copy of your submission which you can also edit it by clicking the \"Edit\" button. Your copy of submission looks like below. Submission view in DM . [crons]: ./deployment/crons.html ",
+    "url": "/slate/usage.html",
+    "relUrl": "/usage.html"
   }
 }
